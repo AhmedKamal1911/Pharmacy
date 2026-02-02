@@ -1,0 +1,40 @@
+model Customer {
+  id                String   @id @default(uuid())
+  name              String
+  phone             String?
+  address           String?
+
+  type              CustomerType
+  isCashOnly        Boolean  @default(false)
+
+  balance           Float    @default(0)
+  creditLimit       Float    @default(0)
+
+  localDiscount     Float    @default(0)
+  importDiscount    Float    @default(0)
+
+  lastTransactionAt DateTime?
+
+  parentCustomerId  String?
+  parentCustomer    Customer? @relation("CustomerHierarchy", fields: [parentCustomerId], references: [id])
+  subCustomers      Customer[] @relation("CustomerHierarchy")
+
+  loyalty           Loyalty?
+}
+
+model Loyalty {
+  id               String @id @default(uuid())
+  customerId       String @unique
+  customer         Customer @relation(fields: [customerId], references: [id])
+
+  pointsPerCurrency Float
+  totalPoints       Float
+  pendingPoints     Float
+}
+
+enum CustomerType {
+  فرد
+  شركة
+}
+--------------------------------------------------
+
