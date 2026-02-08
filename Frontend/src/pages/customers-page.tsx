@@ -2,6 +2,7 @@ import { Download } from "lucide-react";
 import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/shared/page-header";
 import { CustomersTable } from "@/features/customers/components/table/customers-table";
 import { createColumns } from "@/features/customers/components/table/columns";
 import { AddCustomerDialog } from "@/features/customers/components/dialog/add-customer-dialog";
@@ -37,7 +38,12 @@ export default function CustomersPage() {
     updateCustomer(updatedCustomer.id, updatedCustomer);
   };
 
-  const handleCustomerDeleted = (customerId: string) => {
+  const handleCustomerDeleted = (customer: Customer) => {
+    setSelectedCustomer(customer);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleConfirmDelete = (customerId: string) => {
     deleteCustomer(customerId);
   };
 
@@ -52,57 +58,54 @@ export default function CustomersPage() {
     setEditDialogOpen(true);
   };
 
-  const handleDeleteCustomer = (customer: Customer) => {
-    setSelectedCustomer(customer);
-    setDeleteDialogOpen(true);
-  };
-
   // Create columns with action handlers
-  const columns = createColumns({
-    onView: handleViewCustomer,
-    onEdit: handleEditCustomer,
-    onDelete: handleDeleteCustomer,
-  });
+  const columns = createColumns(
+    handleViewCustomer,
+    handleEditCustomer,
+    handleCustomerDeleted,
+  );
 
   return (
-    <div className="container mx-auto py-6">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold">العملاء</h1>
-
-        <div className="flex items-center gap-3">
-          {/* Rule #1: Arabic Labels & shadcn Button */}
-          <Button variant="outline" className=" flex items-center gap-2">
-            <Download size={18} />
-            تصدير البيانات
-          </Button>
-          <AddCustomerDialog
-            onCustomerAdded={handleCustomerAdded}
-            trigger={
-              <Button className="flex items-center gap-2 bg-primary hover:bg-primary/90">
-                إضافة عميل جديد
-              </Button>
-            }
-          />
-        </div>
-      </div>
+    <div className="container mx-auto">
+      <PageHeader
+        title="العملاء"
+        actions={
+          <>
+            <Button variant="outline" className="flex items-center gap-2">
+              <Download size={18} />
+              تصدير البيانات
+            </Button>
+            <AddCustomerDialog
+              onCustomerAdded={handleCustomerAdded}
+              trigger={
+                <Button className="flex items-center gap-2 bg-primary hover:bg-primary/90">
+                  إضافة عميل جديد
+                </Button>
+              }
+            />
+          </>
+        }
+      />
 
       {/* Main Content Area */}
-      {isError ? (
-        <div className="p-12 border-2 border-dashed rounded-xl text-center">
-          <p className="text-destructive ">
-            حدث خطأ أثناء تحميل بيانات العملاء. يرجى المحاولة مرة أخرى.
-          </p>
-        </div>
-      ) : (
-        <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
-          {/* Rule #3: Dynamic DataTable with Loading State */}
-          <CustomersTable
-            columns={columns}
-            data={customers}
-            isLoading={isLoading}
-          />
-        </div>
-      )}
+      <div className="mt-6">
+        {isError ? (
+          <div className="p-12 border-2 border-dashed rounded-xl text-center">
+            <p className="text-destructive ">
+              حدث خطأ أثناء تحميل بيانات العملاء. يرجى المحاولة مرة أخرى.
+            </p>
+          </div>
+        ) : (
+          <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+            {/* Rule #3: Dynamic DataTable with Loading State */}
+            <CustomersTable
+              columns={columns}
+              data={customers}
+              isLoading={isLoading}
+            />
+          </div>
+        )}
+      </div>
 
       {/* Dialogs */}
       <ViewCustomerDialog
@@ -122,7 +125,7 @@ export default function CustomersPage() {
         customer={selectedCustomer}
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
-        onCustomerDeleted={handleCustomerDeleted}
+        onCustomerDeleted={handleConfirmDelete}
       />
     </div>
   );

@@ -9,7 +9,7 @@ import {
 } from "lucide-react";
 
 interface CustomerBadgeProps {
-  type?: "فرد" | "شركة";
+  type?: "PERSON" | "COMPANY";
   status?: "cash" | "credit" | "debit";
   variant?: "default" | "outline" | "secondary" | "destructive";
   className?: string;
@@ -31,8 +31,8 @@ export function CustomerBadge({
     | "destructive" => {
     if (variant) return variant;
 
-    if (type === "شركة") return "outline";
-    if (type === "فرد") return "secondary";
+    if (type === "COMPANY") return "outline";
+    if (type === "PERSON") return "secondary";
 
     if (status === "cash") return "secondary";
     if (status === "credit") return "default";
@@ -42,8 +42,8 @@ export function CustomerBadge({
   };
 
   const getIcon = () => {
-    if (type === "شركة") return <Building2 className="h-3 w-3" />;
-    if (type === "فرد") return <User className="h-3 w-3" />;
+    if (type === "COMPANY") return <Building2 className="h-3 w-3" />;
+    if (type === "PERSON") return <User className="h-3 w-3" />;
 
     if (status === "cash") return <Wallet className="h-3 w-3" />;
     if (status === "credit") return <TrendingUp className="h-3 w-3" />;
@@ -56,7 +56,7 @@ export function CustomerBadge({
     const baseStyles =
       "flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium transition-all duration-200";
 
-    if (type === "شركة") {
+    if (type === "COMPANY") {
       return cn(
         baseStyles,
         "bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100",
@@ -64,7 +64,7 @@ export function CustomerBadge({
       );
     }
 
-    if (type === "فرد") {
+    if (type === "PERSON") {
       return cn(
         baseStyles,
         "bg-green-50 text-green-700 border-green-200 hover:bg-green-100",
@@ -115,8 +115,8 @@ export function CustomerBadge({
 
   // Auto-generate content based on type or status
   const getContent = () => {
-    if (type === "شركة") return "شركة";
-    if (type === "فرد") return "فرد";
+    if (type === "COMPANY") return "شركة";
+    if (type === "PERSON") return "فرد";
 
     if (status === "cash") return "كاش";
     if (status === "credit") return "دائن";
@@ -138,7 +138,7 @@ export function CustomerTypeBadge({
   type,
   className,
 }: {
-  type: "فرد" | "شركة";
+  type: "PERSON" | "COMPANY";
   className?: string;
 }) {
   return <CustomerBadge type={type} className={className} />;

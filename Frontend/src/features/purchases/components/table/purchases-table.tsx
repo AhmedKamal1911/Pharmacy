@@ -38,7 +38,7 @@ interface DataTableProps<TData, TValue> {
   isLoading?: boolean;
 }
 
-export function CustomersTable<TData, TValue>({
+export function PurchasesTable<TData, TValue>({
   columns,
   data,
   isLoading,
@@ -76,25 +76,27 @@ export function CustomersTable<TData, TValue>({
       <div className="flex flex-wrap items-center gap-3">
         {/* Search */}
         <Input
-          placeholder="بحث باسم العميل..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
+          placeholder="بحث باسم المورد..."
+          value={
+            (table.getColumn("supplierName")?.getFilterValue() as string) ?? ""
+          }
           onChange={(e) =>
-            table.getColumn("name")?.setFilterValue(e.target.value)
+            table.getColumn("supplierName")?.setFilterValue(e.target.value)
           }
           className="w-64"
         />
 
-        {/* Customer type */}
+        {/* Purchase status */}
         <Select
-          value={(table.getColumn("type")?.getFilterValue() as string) ?? ""}
+          value={(table.getColumn("status")?.getFilterValue() as string) ?? ""}
           onValueChange={(value) =>
             table
-              .getColumn("type")
+              .getColumn("status")
               ?.setFilterValue(value === "all" ? undefined : value)
           }
         >
           <SelectTrigger className="w-40">
-            <SelectValue placeholder="نوع العميل" />
+            <SelectValue placeholder="حالة الفاتورة" />
           </SelectTrigger>
           <SelectContent
             position="popper"
@@ -103,38 +105,10 @@ export function CustomersTable<TData, TValue>({
             sideOffset={2}
             avoidCollisions={false}
           >
-            <SelectItem value="all">كل الأنواع</SelectItem>
-            <SelectItem value="PERSON">فرد</SelectItem>
-            <SelectItem value="COMPANY">شركة</SelectItem>
-          </SelectContent>
-        </Select>
-
-        {/* Balance status */}
-        <Select
-          value={
-            (table.getColumn("balanceStatus")?.getFilterValue() as string) ?? ""
-          }
-          onValueChange={(value) =>
-            table
-              .getColumn("balanceStatus")
-              ?.setFilterValue(value === "all" ? undefined : value)
-          }
-        >
-          <SelectTrigger className="w-40">
-            <SelectValue placeholder="حالة الرصيد" />
-          </SelectTrigger>
-
-          <SelectContent
-            position="popper"
-            side="bottom"
-            align="start"
-            sideOffset={2}
-            avoidCollisions={false}
-          >
-            <SelectItem value="all">كل الأرصدة</SelectItem>
-            <SelectItem value="debit">مدين</SelectItem>
-            <SelectItem value="credit">دائن</SelectItem>
-            <SelectItem value="cash">نقدي</SelectItem>
+            <SelectItem value="all">كل الحالات</SelectItem>
+            <SelectItem value="PAID">مدفوع</SelectItem>
+            <SelectItem value="PENDING">معلق</SelectItem>
+            <SelectItem value="OVERDUE">متأخر</SelectItem>
           </SelectContent>
         </Select>
       </div>

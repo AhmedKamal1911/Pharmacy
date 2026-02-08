@@ -5,6 +5,7 @@ import App from "./App.tsx";
 import { BrowserRouter } from "react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { DirectionProvider } from "./components/ui/direction.tsx";
+import { Toaster } from "./components/ui/sonner.tsx";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -19,6 +20,7 @@ createRoot(document.getElementById("root")!).render(
       <DirectionProvider dir="rtl">
         <BrowserRouter>
           <App />
+          <Toaster richColors />
         </BrowserRouter>
       </DirectionProvider>
     </QueryClientProvider>

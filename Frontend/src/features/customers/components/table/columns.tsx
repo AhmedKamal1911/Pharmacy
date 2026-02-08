@@ -1,19 +1,13 @@
 import type { ColumnDef } from "@tanstack/react-table";
-import type { Customer } from "../../types";
+import type { Customer, CustomerType } from "../../types";
 import { CustomerTypeBadge, CustomerBalanceBadge } from "../ui/customer-badge";
 import { CustomerActions } from "./customer-actions";
 
-interface CustomerTableActionsProps {
-  onView: (customer: Customer) => void;
-  onEdit: (customer: Customer) => void;
-  onDelete: (customer: Customer) => void;
-}
-
-export const createColumns = ({
-  onView,
-  onEdit,
-  onDelete,
-}: CustomerTableActionsProps): ColumnDef<Customer>[] => [
+export const createColumns = (
+  onView?: (customer: Customer) => void,
+  onEdit?: (customer: Customer) => void,
+  onDelete?: (customer: Customer) => void,
+): ColumnDef<Customer>[] => [
   {
     accessorKey: "name",
     header: () => <div className="text-start">اسم العميل</div>,
@@ -32,8 +26,8 @@ export const createColumns = ({
     header: () => <div className="text-start">النوع</div>,
 
     cell: ({ row }) => {
-      const type = row.getValue<string>("type");
-      return <CustomerTypeBadge type={type as "فرد" | "شركة"} />;
+      const type = row.getValue<CustomerType>("type");
+      return <CustomerTypeBadge type={type} />;
     },
     filterFn: (row, id, value) => {
       if (!value || value === "all") return true;
@@ -72,14 +66,15 @@ export const createColumns = ({
     header: () => <div className="text-start">الإجراءات</div>,
     cell: ({ row }) => {
       const customer = row.original;
-
       return (
-        <CustomerActions
-          customer={customer}
-          onView={onView}
-          onEdit={onEdit}
-          onDelete={onDelete}
-        />
+        <div className="text-start">
+          <CustomerActions
+            customer={customer}
+            onView={onView}
+            onEdit={onEdit}
+            onDelete={onDelete}
+          />
+        </div>
       );
     },
   },

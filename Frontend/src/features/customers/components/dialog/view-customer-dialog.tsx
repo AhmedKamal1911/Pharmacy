@@ -37,7 +37,7 @@ export function ViewCustomerDialog({
   if (!customer) return null;
 
   const formatDate = (dateString: string) => {
-    return new Date(dateString).toLocaleDateString("ar-SA", {
+    return new Date(dateString).toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -80,7 +80,7 @@ export function ViewCustomerDialog({
                     <div className="flex items-center gap-2">
                       <Badge
                         variant={
-                          customer.type === "شركة" ? "outline" : "secondary"
+                          customer.type === "COMPANY" ? "outline" : "secondary"
                         }
                         className="text-xs px-2 py-1"
                       >
@@ -272,7 +272,7 @@ export function ViewCustomerDialog({
                     <span className="mr-2">
                       {customer.isCashOnly ? "عميل نقدي فقط" : "عميل ائتماني"}
                     </span>
-                    {customer.type === "شركة" && "• شركة"}
+                    {customer.type === "COMPANY" && "• شركة"}
                     {customer.balance > 0 && "• له رصيد"}
                     {customer.balance < 0 && "• عليه ديون"}
                   </div>

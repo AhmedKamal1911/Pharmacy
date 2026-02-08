@@ -1,6 +1,11 @@
 import { Routes, Route } from "react-router";
 import DashboardLayout from "@/components/layouts/dashboard-layout";
 import CustomersPage from "@/pages/customers-page";
+import SuppliersPage from "./pages/suppliers-page";
+import PurchasesPage from "./pages/purchases-page";
+import PurchaseInvoicePage from "./pages/purchase-invoice-page";
+import AddPurchasePage from "./pages/add-purchase-page";
+import EditPurchasePage from "./pages/edit-purchase-page";
 
 // Placeholder components
 const Home = () => (
@@ -19,6 +24,17 @@ function App() {
         <Route path="/inventory" element={<Inventory />} />{" "}
         {/* Matches Sidebar */}
         <Route path="/customers" element={<CustomersPage />} />{" "}
+        <Route path="/suppliers" element={<SuppliersPage />} />{" "}
+        <Route path="/purchases" element={<PurchasesPage />} />{" "}
+        <Route
+          path="/purchases/invoice/:invoiceId"
+          element={<PurchaseInvoicePage />}
+        />{" "}
+        <Route path="/purchases/add" element={<AddPurchasePage />} />{" "}
+        <Route
+          path="/purchases/edit/:invoiceId"
+          element={<EditPurchasePage />}
+        />{" "}
         {/* Matches Sidebar */}
         <Route path="/settings" element={<Settings />} />
         <Route path="/about" element={<About />} />

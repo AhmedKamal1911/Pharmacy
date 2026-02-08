@@ -5,6 +5,7 @@ import {
   Users,
   Settings,
   LogOut,
+  Plus,
 } from "lucide-react";
 
 import {
@@ -32,6 +33,7 @@ const NAV_ITEMS = [
     group: "الإدارة",
     items: [
       { title: "العملاء", url: "/customers", icon: Users },
+      { title: "الموردين", url: "/suppliers", icon: Plus },
       { title: "الإعدادات", url: "/settings", icon: Settings },
     ],
   },

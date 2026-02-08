@@ -33,7 +33,7 @@ const formSchema = z.object({
     .string()
     .min(5, "يجب أن يكون العنوان 5 أحرف على الأقل.")
     .max(200, "يجب أن يكون العنوان 200 حرف كحد أقصى."),
-  type: z.enum(["فرد", "شركة"]),
+  type: z.enum(["PERSON", "COMPANY"]),
   isCashOnly: z.boolean(),
   balance: z.number(),
   creditLimit: z.number().min(0, "يجب أن يكون حد الائتمان غير سالب"),
@@ -66,7 +66,7 @@ export function AddCustomerForm({
       name: "",
       phone: "",
       address: "",
-      type: "فرد",
+      type: "PERSON",
       isCashOnly: false,
       balance: 0,
       creditLimit: 0,
@@ -148,8 +148,8 @@ export function AddCustomerForm({
                   <SelectValue placeholder="اختر نوع العميل" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="فرد">فرد</SelectItem>
-                  <SelectItem value="شركة">شركة</SelectItem>
+                  <SelectItem value="PERSON">فرد</SelectItem>
+                  <SelectItem value="COMPANY">شركة</SelectItem>
                 </SelectContent>
               </Select>
               {fieldState.invalid && <FieldError errors={[fieldState.error]} />}

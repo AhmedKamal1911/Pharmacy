@@ -1,4 +1,4 @@
-export type CustomerType = "فرد" | "شركة";
+export type CustomerType = "PERSON" | "COMPANY";
 
 export interface Loyalty {
   id: string;
@@ -16,7 +16,7 @@ export interface CustomerFilters {
 export interface Customer {
   id: string;
   name: string;
-  phone?: string;
+  phone: string;
   address?: string;
   type: CustomerType;
   isCashOnly: boolean;
