@@ -7,69 +7,66 @@ export function createPurchaseItemColumns(): ColumnDef<PurchaseItem>[] {
   return [
     {
       accessorKey: "medicineCode",
-      header: () => <div className="text-right">كود الدواء</div>,
+      header: () => <div className="text-right px-2 ">كود الدواء</div>,
       cell: ({ row }) => (
-        <Badge
-          variant="outline"
-          className="bg-blue-50 text-blue-700 border-blue-200"
-        >
-          {row.getValue("medicineCode")}
-        </Badge>
+        // الـ flex هنا مع w-full و justify-end هيجبره يروح يمين
+        <div className="flex  px-2">
+          <Badge
+            variant="outline"
+            className="bg-blue-50 text-blue-700 border-blue-200"
+          >
+            {row.getValue("medicineCode")}
+          </Badge>
+        </div>
       ),
     },
     {
       accessorKey: "medicineName",
-      header: () => <div className="text-right">اسم الصنف</div>,
+      header: () => <div className="text-right px-2">اسم الصنف</div>,
       cell: ({ row }) => (
-        <div className="font-medium text-slate-900">
+        <div className="font-medium text-slate-900 text-right px-2">
           {row.getValue("medicineName")}
         </div>
       ),
     },
     {
       accessorKey: "quantity",
-      header: () => <div className="text-right">الكمية</div>,
+      header: () => <div className="text-right px-2">الكمية</div>,
       cell: ({ row }) => (
-        <div className="flex items-center gap-1 justify-end">
-          <Package className="h-3 w-3 text-slate-400" />
+        <div className="flex items-center gap-2 justify-start px-2">
           <span className="font-medium">{row.getValue("quantity")}</span>
+          <Package className="h-4 w-4 text-slate-400" />
         </div>
       ),
     },
     {
       accessorKey: "salePrice",
-      header: () => <div className="text-right">سعر البيع</div>,
-      cell: ({ row }) => {
-        const price = row.getValue<number>("salePrice");
-        return (
-          <span className="font-medium text-green-600">
-            {price.toFixed(2)}
-          </span>
-        );
-      },
+      header: () => <div className="text-right px-2">سعر البيع</div>,
+      cell: ({ row }) => (
+        <div className="text-right w-full font-medium text-green-600 px-2">
+          {row.getValue<number>("salePrice").toFixed(2)}
+        </div>
+      ),
     },
     {
       accessorKey: "tax",
-      header: () => <div className="text-right">الضريبة</div>,
-      cell: ({ row }) => {
-        const tax = row.getValue<number>("tax");
-        return (
-          <div className="flex items-center gap-1 justify-end">
-            <Percent className="h-3 w-3 text-orange-400" />
-            <span className="text-orange-600">{tax}%</span>
-          </div>
-        );
-      },
+      header: () => <div className="text-right px-2">الضريبة</div>,
+      cell: ({ row }) => (
+        <div className="flex items-center gap-1 justify-start  w-full px-2 text-orange-600">
+          <span>{row.getValue<number>("tax")}%</span>
+          <Percent className="h-3 w-3 text-orange-400" />
+        </div>
+      ),
     },
     {
       accessorKey: "mainDiscount",
-      header: () => <div className="text-right">الخصم</div>,
+      header: () => <div className="text-right px-2">الخصم</div>,
       cell: ({ row }) => {
         const mainDiscount = row.getValue<number>("mainDiscount");
         const extraDiscount = row.original.extraDiscount;
         return (
-          <div className="flex items-center gap-1 justify-end">
-            <span className="text-red-600">{mainDiscount}</span>
+          <div className="flex items-center gap-1 justify-start w-full px-2">
+            <span className="text-red-600 font-bold">{mainDiscount}</span>
             {extraDiscount && (
               <span className="text-red-500">+{extraDiscount}</span>
             )}
@@ -79,32 +76,21 @@ export function createPurchaseItemColumns(): ColumnDef<PurchaseItem>[] {
     },
     {
       accessorKey: "cost",
-      header: () => <div className="text-right">التكلفة</div>,
-      cell: ({ row }) => {
-        const cost = row.getValue<number>("cost");
-        return (
-          <span className="font-medium text-slate-700">
-            {cost.toFixed(2)}
-          </span>
-        );
-      },
+      header: () => <div className="text-right px-2">التكلفة</div>,
+      cell: ({ row }) => (
+        <div className="text-right w-full font-medium text-slate-700 px-2">
+          {row.getValue<number>("cost").toFixed(2)}
+        </div>
+      ),
     },
     {
       accessorKey: "expiryDate",
-      header: () => <div className="text-right">تاريخ الصلاحية</div>,
+      header: () => <div className="text-right px-2">تاريخ الصلاحية</div>,
       cell: ({ row }) => {
         const expiryDate = row.getValue<string>("expiryDate");
         const expirable = row.original.expirable;
         return (
-          <div className="flex items-center gap-2 justify-end">
-            <div className="flex items-center gap-1">
-              <Clock className="h-3 w-3 text-slate-400" />
-              <span className="text-slate-600">
-                {expiryDate
-                  ? new Date(expiryDate).toLocaleDateString("en-US")
-                  : "-"}
-              </span>
-            </div>
+          <div className="flex items-center gap-2 justify-start w-full px-2">
             {expirable && (
               <Badge
                 variant="outline"
@@ -113,26 +99,35 @@ export function createPurchaseItemColumns(): ColumnDef<PurchaseItem>[] {
                 صلاحية
               </Badge>
             )}
+            <div className="flex items-center gap-1">
+              <span className="text-slate-600 text-sm">
+                {expiryDate
+                  ? new Date(expiryDate).toLocaleDateString("en-GB")
+                  : "-"}
+              </span>
+              <Clock className="h-3 w-3 text-slate-400" />
+            </div>
           </div>
         );
       },
     },
     {
       accessorKey: "bonus",
-      header: () => <div className="text-right">بونص</div>,
-      cell: ({ row }) => {
-        const bonus = row.getValue<number>("bonus");
-        return bonus ? (
-          <Badge
-            variant="outline"
-            className="bg-purple-50 text-purple-700 border-purple-200"
-          >
-            +{bonus}
-          </Badge>
-        ) : (
-          <span className="text-slate-400">-</span>
-        );
-      },
+      header: () => <div className="text-right px-2">بونص</div>,
+      cell: ({ row }) => (
+        <div className="text-right w-full px-2">
+          {row.getValue<number>("bonus") ? (
+            <Badge
+              variant="outline"
+              className="bg-purple-50 text-purple-700 border-purple-200"
+            >
+              +{row.getValue("bonus")}
+            </Badge>
+          ) : (
+            <span className="text-slate-400">-</span>
+          )}
+        </div>
+      ),
     },
   ];
 }

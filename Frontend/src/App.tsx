@@ -6,6 +6,7 @@ import PurchasesPage from "./pages/purchases-page";
 import PurchaseInvoicePage from "./pages/purchase-invoice-page";
 import AddPurchasePage from "./pages/add-purchase-page";
 import EditPurchasePage from "./pages/edit-purchase-page";
+import SupplierPurchasesPage from "./pages/supplier-purchases-page";
 
 // Placeholder components
 const Home = () => (
@@ -25,16 +26,15 @@ function App() {
         {/* Matches Sidebar */}
         <Route path="/customers" element={<CustomersPage />} />{" "}
         <Route path="/suppliers" element={<SuppliersPage />} />{" "}
+        <Route
+          path="/suppliers/:supplierId/purchases"
+          element={<SupplierPurchasesPage />}
+        />{" "}
+        {/* مسارات المشتريات */}
         <Route path="/purchases" element={<PurchasesPage />} />{" "}
-        <Route
-          path="/purchases/invoice/:invoiceId"
-          element={<PurchaseInvoicePage />}
-        />{" "}
-        <Route path="/purchases/add" element={<AddPurchasePage />} />{" "}
-        <Route
-          path="/purchases/edit/:invoiceId"
-          element={<EditPurchasePage />}
-        />{" "}
+        <Route path="/purchases/new" element={<AddPurchasePage />} />{" "}
+        <Route path="/purchases/:id" element={<PurchaseInvoicePage />} />{" "}
+        <Route path="/purchases/:id/edit" element={<EditPurchasePage />} />{" "}
         {/* Matches Sidebar */}
         <Route path="/settings" element={<Settings />} />
         <Route path="/about" element={<About />} />

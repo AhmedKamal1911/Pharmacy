@@ -2,11 +2,11 @@ import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
 import { purchasesMock, deletePurchase } from "../api/mock-data";
 
-export function usePurchases() {
+export function usePurchases(supplierIdParam?: string) {
   const [searchParams] = useSearchParams();
   const [, forceUpdate] = useState({});
 
-  const supplierId = searchParams.get("supplierId");
+  const supplierId = supplierIdParam || searchParams.get("supplierId");
 
   const purchases = useMemo(() => {
     // If supplierId exists, filter purchases for that supplier

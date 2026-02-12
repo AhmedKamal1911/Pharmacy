@@ -28,18 +28,27 @@ export interface PurchaseInvoice {
 // بيانات كل صنف في الفاتورة
 export interface PurchaseItem {
   id: string;
-  medicineCode: string; // كود الدواء
-  medicineName: string; // اسم الصنف
-  quantity: number; // الكمية
-  unitsPerPackage?: number; // أجزاء / عدد الوحدات داخل العبوة
-  salePrice: number; // سعر البيع
-  tax: number; // ضريبة
-  mainDiscount: number; // خصم أساسي
-  extraDiscount?: number; // خصم إضافي
-  cost: number; // التكلفة
-  expiryDate?: string; // تاريخ الصلاحية
-  bonus?: number; // البونص
-  expirable: boolean; // هل له صلاحية (نعم / لا)
+
+  medicineId: string; // ✅ الربط الحقيقي بالصنف
+  medicineName: string; // للعرض فقط (snapshot وقت الفاتورة)
+  medicineCode?: string; // كود الصنف (اختياري)
+
+  quantity: number;
+  unitsPerPackage: number;
+
+  salePrice: number;
+  tax: number;
+
+  mainDiscount: number;
+  extraDiscount: number;
+
+  cost: number;
+
+  expiryDate?: string;
+
+  bonus: number;
+
+  expirable: boolean;
 }
 
 // بيانات المجموعات

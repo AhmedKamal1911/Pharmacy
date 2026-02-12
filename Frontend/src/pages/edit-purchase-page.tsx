@@ -15,7 +15,7 @@ import { unstable_batchedUpdates } from "react-dom";
 import { AddInvoiceForm } from "@/features/purchases/components/form/purchase-invoice-form";
 
 export default function EditPurchasePage() {
-  const { invoiceId } = useParams<{ invoiceId: string }>();
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
   // Invoice State
@@ -32,8 +32,8 @@ export default function EditPurchasePage() {
 
   // Load Invoice Data
   useEffect(() => {
-    if (invoiceId) {
-      const invoiceData = getPurchaseInvoiceById(invoiceId);
+    if (id) {
+      const invoiceData = getPurchaseInvoiceById(id);
       if (invoiceData) {
         // Batch all state updates to prevent cascading renders
         unstable_batchedUpdates(() => {
@@ -51,7 +51,7 @@ export default function EditPurchasePage() {
         });
       }
     }
-  }, [invoiceId]);
+  }, [id]);
 
   // Calculate Totals
   const calculateTotals = (): InvoiceTotals => {
@@ -143,7 +143,7 @@ export default function EditPurchasePage() {
     console.log("Updated Invoice:", updatedInvoice);
 
     // Navigate to invoice detail
-    navigate(`/purchases/invoice/${invoice.id}`);
+    navigate(`/purchases/${invoice.id}`);
   };
 
   // Update Invoice Data
@@ -202,7 +202,7 @@ export default function EditPurchasePage() {
             <div className="flex items-center gap-3">
               <Button
                 variant="outline"
-                onClick={() => navigate(`/purchases/invoice/${invoice.id}`)}
+                onClick={() => navigate(`/purchases/${invoice.id}`)}
                 className="flex items-center gap-2"
               >
                 <X size={18} />

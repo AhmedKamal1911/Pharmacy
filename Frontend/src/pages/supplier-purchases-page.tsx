@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router";
+import { useParams, useNavigate } from "react-router";
 import { PageHeader } from "@/components/shared/page-header";
 import { PurchasesTable } from "@/features/purchases/components/table/purchases-table";
 import { createPurchaseColumns } from "@/features/purchases/components/table/columns";
@@ -9,10 +9,11 @@ import { Plus } from "lucide-react";
 import { DeletePurchaseDialog } from "@/features/purchases/components/dialog/delete-purchase-dialog";
 import type { Purchase } from "@/features/purchases/types";
 
-export default function PurchasesPage() {
-  const { purchases, isLoading, isError, supplierId, deletePurchase } =
-    usePurchases();
+export default function SupplierPurchasesPage() {
+  const { supplierId } = useParams<{ supplierId: string }>();
   const navigate = useNavigate();
+  const { purchases, isLoading, isError, deletePurchase } =
+    usePurchases(supplierId);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [purchaseToDelete, setPurchaseToDelete] = useState<Purchase | null>(
     null,
@@ -53,10 +54,10 @@ export default function PurchasesPage() {
   return (
     <div className="space-y-6">
       <PageHeader
-        title="المشتريات"
+        title="مشتريات المورد"
         actions={
           <Button
-            onClick={() => navigate("/purchases/new")}
+            onClick={() => navigate(`/purchases/new?supplier=${supplierId}`)}
             className="flex items-center gap-2"
           >
             <Plus size={18} />
@@ -66,23 +67,9 @@ export default function PurchasesPage() {
       />
 
       <div className="space-y-4">
-        {supplierId ? (
-          <div className="space-y-4">
-            <h2 className="text-xl font-semibold">مشتريات المورد</h2>
-            <div className="text-sm text-muted-foreground">
-              Supplier ID: {supplierId}
-            </div>
-          </div>
-        ) : (
-          <div className="text-center py-12">
-            <h2 className="text-xl font-semibold mb-2">
-              اختر موردًا لعرض مشترياته
-            </h2>
-            <p className="text-muted-foreground">
-              الرجاء الذهاب إلى صفحة الموردين واختيار مورد لعرض مشترياته
-            </p>
-          </div>
-        )}
+        <div className="text-sm text-muted-foreground">
+          المورد رقم: {supplierId}
+        </div>
 
         {/* Purchases Table */}
         {isError ? (

@@ -7,10 +7,12 @@ import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Plus, Trash2 } from "lucide-react";
 import type { PurchaseItem } from "../../types";
+import { MedicineSelector } from "@/features/medicines/components/medicine-selector";
 
 const purchaseItemSchema = z.object({
-  medicineCode: z.string().min(1, "كود الدواء مطلوب"),
+  medicineId: z.string().min(1, "اختيار الصنف مطلوب"),
   medicineName: z.string().min(1, "اسم الصنف مطلوب"),
+  medicineCode: z.string().optional(),
   quantity: z.number().min(1, "الكمية يجب أن تكون 1 على الأقل"),
   unitsPerPackage: z.number().min(1, "الوحدات يجب أن تكون 1 على الأقل"),
   salePrice: z.number().min(0, "سعر البيع يجب أن يكون غير سالب"),
@@ -89,19 +91,48 @@ export function PurchaseItemsForm({
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <Controller
+                name={`items.${index}.medicineId`}
+                control={form.control}
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel htmlFor={`medicine-${item.id}`}>
+                      الصنف *
+                    </FieldLabel>
+                    <MedicineSelector
+                      value={field.value}
+                      onValueChange={(medicineId, medicineName) => {
+                        field.onChange(medicineId);
+                        onUpdateItem(item.id, "medicineId", medicineId);
+                        onUpdateItem(item.id, "medicineName", medicineName);
+                        // Also update the form state for medicineName
+                        form.setValue(
+                          `items.${index}.medicineName`,
+                          medicineName,
+                        );
+                      }}
+                      placeholder="اختر الصنف"
+                    />
+                    {fieldState.invalid && (
+                      <FieldError errors={[fieldState.error]} />
+                    )}
+                  </Field>
+                )}
+              />
+
+              <Controller
                 name={`items.${index}.medicineCode`}
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
                     <FieldLabel htmlFor={`code-${item.id}`}>
-                      كود الدواء
+                      كود الصنف
                     </FieldLabel>
                     <Input
                       {...field}
                       id={`code-${item.id}`}
                       aria-invalid={fieldState.invalid}
                       placeholder="مثل: MED001"
-                      value={item.medicineCode}
+                      value={item.medicineCode || ""}
                       onChange={(e) => {
                         field.onChange(e.target.value);
                         onUpdateItem(item.id, "medicineCode", e.target.value);
@@ -117,26 +148,20 @@ export function PurchaseItemsForm({
               <Controller
                 name={`items.${index}.medicineName`}
                 control={form.control}
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={`name-${item.id}`}>
+                render={({ field }) => (
+                  <div className="space-y-2">
+                    <FieldLabel htmlFor={`name-display-${item.id}`}>
                       اسم الصنف
                     </FieldLabel>
                     <Input
                       {...field}
-                      id={`name-${item.id}`}
-                      aria-invalid={fieldState.invalid}
-                      placeholder="اسم الدواء"
-                      value={item.medicineName}
-                      onChange={(e) => {
-                        field.onChange(e.target.value);
-                        onUpdateItem(item.id, "medicineName", e.target.value);
-                      }}
+                      id={`name-display-${item.id}`}
+                      value={field.value}
+                      disabled
+                      className="bg-gray-50"
+                      placeholder="سيتم ملؤه تلقائياً"
                     />
-                    {fieldState.invalid && (
-                      <FieldError errors={[fieldState.error]} />
-                    )}
-                  </Field>
+                  </div>
                 )}
               />
 

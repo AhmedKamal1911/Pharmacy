@@ -1,5 +1,4 @@
 import { MoreHorizontal, Eye, Edit, Trash2 } from "lucide-react";
-import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,12 +24,6 @@ export function PurchaseActions({
   onEdit,
   onDelete,
 }: PurchaseActionsProps) {
-  const navigate = useNavigate();
-
-  const handleView = () => {
-    navigate(`/purchases/invoice/${purchase.id}`);
-  };
-
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -42,9 +35,7 @@ export function PurchaseActions({
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>الإجراءات</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={onView ? () => onView(purchase) : handleView}
-        >
+        <DropdownMenuItem onClick={() => onView?.(purchase)}>
           <Eye className="ml-2 h-4 w-4" />
           عرض
         </DropdownMenuItem>
