@@ -65,11 +65,15 @@ export function createPurchaseItemColumns(): ColumnDef<PurchaseItem>[] {
         const mainDiscount = row.getValue<number>("mainDiscount");
         const extraDiscount = row.original.extraDiscount;
         return (
-          <div className="flex items-center gap-1 justify-start w-full px-2">
-            <span className="text-red-600 font-bold">{mainDiscount}</span>
-            {extraDiscount && (
-              <span className="text-red-500">+{extraDiscount}</span>
-            )}
+          <div className="flex justify-start">
+            <Badge
+              variant="outline"
+              className="border-red-200 bg-red-50 text-red-700 font-medium px-3 py-1 rounded-full"
+            >
+              {extraDiscount && extraDiscount > 0
+                ? `${mainDiscount}% + ${extraDiscount}%`
+                : `${mainDiscount}%`}
+            </Badge>
           </div>
         );
       },
@@ -91,22 +95,31 @@ export function createPurchaseItemColumns(): ColumnDef<PurchaseItem>[] {
         const expirable = row.original.expirable;
         return (
           <div className="flex items-center gap-2 justify-start w-full px-2">
-            {expirable && (
+            {expirable ? (
+              <>
+                <Badge
+                  variant="outline"
+                  className="bg-green-50 text-green-700 border-green-200 text-xs"
+                >
+                  صلاحية
+                </Badge>
+                <div className="flex items-center gap-1">
+                  <span className="text-slate-600 text-sm">
+                    {expiryDate
+                      ? new Date(expiryDate).toLocaleDateString("en-GB")
+                      : "-"}
+                  </span>
+                  <Clock className="h-3 w-3 text-slate-400" />
+                </div>
+              </>
+            ) : (
               <Badge
                 variant="outline"
-                className="bg-green-50 text-green-700 border-green-200 text-xs"
+                className="bg-gray-50 text-gray-600 border-gray-200 text-xs"
               >
-                صلاحية
+                بدون
               </Badge>
             )}
-            <div className="flex items-center gap-1">
-              <span className="text-slate-600 text-sm">
-                {expiryDate
-                  ? new Date(expiryDate).toLocaleDateString("en-GB")
-                  : "-"}
-              </span>
-              <Clock className="h-3 w-3 text-slate-400" />
-            </div>
           </div>
         );
       },

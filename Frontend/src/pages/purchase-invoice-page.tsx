@@ -35,43 +35,41 @@ export default function PurchaseInvoicePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header with Actions */}
-        <InvoiceHeader
-          invoice={invoice}
-          onEdit={() => navigate(`/purchases/${id}/edit`)}
-          onBack={() => navigate("/purchases")}
-        />
+    <div className="min-h-screen bg-slate-50 rounded-lg p-4 space-y-4">
+      {/* Header with Actions */}
+      <InvoiceHeader
+        invoice={invoice}
+        onEdit={() => navigate(`/purchases/${id}/edit`)}
+        onBack={() => navigate("/purchases")}
+      />
 
-        {/* Invoice Overview Cards */}
-        <InvoiceInfoCards invoice={invoice} />
+      {/* Invoice Overview Cards */}
+      <InvoiceInfoCards invoice={invoice} />
 
-        {/* Notes Section */}
-        <InvoiceNotes invoice={invoice} />
+      {/* Notes Section */}
+      <InvoiceNotes invoice={invoice} />
 
-        {/* Items Table */}
-        <Card className="border-slate-200 shadow-sm">
-          <CardHeader>
-            <div className="flex items-center gap-2">
-              <div className="bg-indigo-100 p-2 rounded-lg">
-                <Package className="h-4 w-4 text-indigo-600" />
-              </div>
-              <CardTitle className="text-lg text-slate-900">
-                الأصناف ({invoice.items.length})
-              </CardTitle>
+      {/* Items Table */}
+      <Card className="border-slate-200 shadow-sm">
+        <CardHeader>
+          <div className="flex items-center gap-2">
+            <div className="bg-indigo-100 p-2 rounded-lg">
+              <Package className="h-4 w-4 text-indigo-600" />
             </div>
-          </CardHeader>
-          <CardContent>
-            <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
-              <PurchaseItemsTable columns={columns} data={invoice.items} />
-            </div>
-          </CardContent>
-        </Card>
+            <CardTitle className="text-lg text-slate-900">
+              الأصناف ({invoice.items.length})
+            </CardTitle>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="bg-card rounded-xl shadow-sm border border-border overflow-hidden">
+            <PurchaseItemsTable columns={columns} data={invoice.items} />
+          </div>
+        </CardContent>
+      </Card>
 
-        {/* Totals Breakdown */}
-        <InvoiceTotals invoice={invoice} />
-      </div>
+      {/* Totals Breakdown */}
+      <InvoiceTotals invoice={invoice} />
     </div>
   );
 }

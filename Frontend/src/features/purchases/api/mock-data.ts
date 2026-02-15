@@ -75,6 +75,7 @@ export const mockPurchaseInvoices: PurchaseInvoice[] = [
     items: [
       {
         id: "1",
+        medicineId: "1",
         medicineCode: "MED001",
         medicineName: "بانادول إكسترا",
         quantity: 100,
@@ -90,6 +91,7 @@ export const mockPurchaseInvoices: PurchaseInvoice[] = [
       },
       {
         id: "2",
+        medicineId: "9",
         medicineCode: "MED002",
         medicineName: "أوجمنتين 625 مجم",
         quantity: 50,
@@ -105,6 +107,7 @@ export const mockPurchaseInvoices: PurchaseInvoice[] = [
       },
       {
         id: "3",
+        medicineId: "5",
         medicineCode: "MED003",
         medicineName: "فولتارين 50 مجم",
         quantity: 75,
@@ -117,6 +120,38 @@ export const mockPurchaseInvoices: PurchaseInvoice[] = [
         expiryDate: "2029-03-20",
         bonus: 3,
         expirable: true,
+      },
+      {
+        id: "4",
+        medicineId: "15",
+        medicineCode: "MED010",
+        medicineName: "شاش معقم",
+        quantity: 200,
+        unitsPerPackage: 50,
+        salePrice: 12.0,
+        tax: 14,
+        mainDiscount: 0,
+        extraDiscount: 0,
+        cost: 8.5,
+        expiryDate: "",
+        bonus: 0,
+        expirable: false,
+      },
+      {
+        id: "5",
+        medicineId: "20",
+        medicineCode: "MED011",
+        medicineName: "قطن طبي",
+        quantity: 100,
+        unitsPerPackage: 100,
+        salePrice: 25.0,
+        tax: 14,
+        mainDiscount: 5,
+        extraDiscount: 0,
+        cost: 18.0,
+        expiryDate: "",
+        bonus: 0,
+        expirable: false,
       },
     ],
     totals: {
@@ -139,6 +174,7 @@ export const mockPurchaseInvoices: PurchaseInvoice[] = [
     items: [
       {
         id: "4",
+        medicineId: "11",
         medicineCode: "MED004",
         medicineName: "أموكسيل 500 مجم",
         quantity: 120,
@@ -154,6 +190,7 @@ export const mockPurchaseInvoices: PurchaseInvoice[] = [
       },
       {
         id: "5",
+        medicineId: "4",
         medicineCode: "MED005",
         medicineName: "بروفين 400 مجم",
         quantity: 80,
@@ -188,6 +225,7 @@ export const mockPurchaseInvoices: PurchaseInvoice[] = [
     items: [
       {
         id: "6",
+        medicineId: "24",
         medicineCode: "MED006",
         medicineName: "زينتاك 150 مجم",
         quantity: 60,
@@ -222,6 +260,7 @@ export const mockPurchaseInvoices: PurchaseInvoice[] = [
     items: [
       {
         id: "7",
+        medicineId: "14",
         medicineCode: "MED007",
         medicineName: "فلاجيل 400 مجم",
         quantity: 200,
@@ -237,6 +276,7 @@ export const mockPurchaseInvoices: PurchaseInvoice[] = [
       },
       {
         id: "8",
+        medicineId: "27",
         medicineCode: "MED008",
         medicineName: "سبازموسيلفان 2 مجم",
         quantity: 150,
@@ -271,6 +311,7 @@ export const mockPurchaseInvoices: PurchaseInvoice[] = [
     items: [
       {
         id: "9",
+        medicineId: "6",
         medicineCode: "MED009",
         medicineName: "كيتوفان 50 مجم",
         quantity: 90,

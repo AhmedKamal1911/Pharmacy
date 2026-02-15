@@ -25,6 +25,7 @@ export default function AddPurchasePage() {
   const [items, setItems] = useState<PurchaseItem[]>([
     {
       id: "1",
+      medicineId: "",
       medicineCode: "",
       medicineName: "",
       quantity: 1,
@@ -76,6 +77,7 @@ export default function AddPurchasePage() {
   const addItem = () => {
     const newItem: PurchaseItem = {
       id: Date.now().toString(),
+      medicineId: "",
       medicineCode: "",
       medicineName: "",
       quantity: 1,
@@ -145,70 +147,66 @@ export default function AddPurchasePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-3 rounded-xl">
-                <Plus className="h-6 w-6 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-bold text-slate-900">
-                  فاتورة مشتريات جديدة
-                </h1>
-                <p className="text-slate-500">إنشاء فاتورة مشتريات جديدة</p>
-              </div>
+    <div className="min-h-screen bg-slate-50 rounded-lg p-4 space-y-4">
+      {/* Header */}
+      <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <div className="bg-gradient-to-r from-green-500 to-emerald-600 p-3 rounded-xl">
+              <Plus className="h-6 w-6 text-white" />
             </div>
-            <div className="flex items-center gap-3">
-              <Button
-                variant="outline"
-                onClick={() => navigate("/purchases")}
-                className="flex items-center gap-2"
-              >
-                <X size={18} />
-                إلغاء
-              </Button>
-              <Button
-                onClick={saveInvoice}
-                className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
-                disabled={
-                  !invoiceData.supplierId ||
-                  items.some(
-                    (item) => !item.medicineName || item.salePrice <= 0,
-                  )
-                }
-              >
-                <Save size={18} />
-                حفظ الفاتورة
-              </Button>
+            <div>
+              <h1 className="text-2xl font-bold text-slate-900">
+                فاتورة مشتريات جديدة
+              </h1>
+              <p className="text-slate-500">إنشاء فاتورة مشتريات جديدة</p>
             </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <Button
+              variant="outline"
+              onClick={() => navigate("/purchases")}
+              className="flex items-center gap-2"
+            >
+              <X size={18} />
+              إلغاء
+            </Button>
+            <Button
+              onClick={saveInvoice}
+              className="flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700"
+              disabled={
+                !invoiceData.supplierId ||
+                items.some((item) => !item.medicineName || item.salePrice <= 0)
+              }
+            >
+              <Save size={18} />
+              حفظ الفاتورة
+            </Button>
           </div>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Left Column - Invoice Info & Totals */}
-          <div className="lg:col-span-1 space-y-6">
-            <AddInvoiceForm
-              supplierId={invoiceData.supplierId}
-              notes={invoiceData.notes}
-              onSupplierChange={handleSupplierChange}
-              onNotesChange={handleNotesChange}
-            />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column - Invoice Info & Totals */}
+        <div className="lg:col-span-1 space-y-6">
+          <AddInvoiceForm
+            supplierId={invoiceData.supplierId}
+            notes={invoiceData.notes}
+            onSupplierChange={handleSupplierChange}
+            onNotesChange={handleNotesChange}
+          />
 
-            <PurchaseTotalsCard totals={totals} />
-          </div>
+          <PurchaseTotalsCard totals={totals} />
+        </div>
 
-          {/* Right Column - Items */}
-          <div className="lg:col-span-2">
-            <PurchaseItemsForm
-              items={items}
-              onAddItem={addItem}
-              onUpdateItem={updateItem}
-              onRemoveItem={removeItem}
-            />
-          </div>
+        {/* Right Column - Items */}
+        <div className="lg:col-span-2">
+          <PurchaseItemsForm
+            items={items}
+            onAddItem={addItem}
+            onUpdateItem={updateItem}
+            onRemoveItem={removeItem}
+          />
         </div>
       </div>
     </div>

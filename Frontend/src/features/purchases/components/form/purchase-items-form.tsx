@@ -5,6 +5,13 @@ import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Field, FieldError, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Plus, Trash2 } from "lucide-react";
 import type { PurchaseItem } from "../../types";
 import { MedicineSelector } from "@/features/medicines/components/medicine-selector";
@@ -100,15 +107,29 @@ export function PurchaseItemsForm({
                     </FieldLabel>
                     <MedicineSelector
                       value={field.value}
-                      onValueChange={(medicineId, medicineName) => {
+                      onValueChange={(
+                        medicineId,
+                        medicineName,
+                        medicineCode,
+                      ) => {
                         field.onChange(medicineId);
                         onUpdateItem(item.id, "medicineId", medicineId);
                         onUpdateItem(item.id, "medicineName", medicineName);
-                        // Also update the form state for medicineName
+                        // Also update the medicine code if provided
+                        if (medicineCode) {
+                          onUpdateItem(item.id, "medicineCode", medicineCode);
+                        }
+                        // Also update the form state for medicineName and medicineCode
                         form.setValue(
                           `items.${index}.medicineName`,
                           medicineName,
                         );
+                        if (medicineCode) {
+                          form.setValue(
+                            `items.${index}.medicineCode`,
+                            medicineCode,
+                          );
+                        }
                       }}
                       placeholder="اختر الصنف"
                     />
@@ -352,29 +373,74 @@ export function PurchaseItemsForm({
               />
 
               <Controller
-                name={`items.${index}.expiryDate`}
+                name={`items.${index}.expirable`}
                 control={form.control}
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel htmlFor={`expiry-${item.id}`}>
-                      تاريخ الصلاحية
+                    <FieldLabel htmlFor={`expirable-${item.id}`}>
+                      منتهي الصلاحية
                     </FieldLabel>
-                    <Input
-                      {...field}
-                      id={`expiry-${item.id}`}
-                      type="date"
-                      aria-invalid={fieldState.invalid}
-                      value={item.expiryDate}
-                      onChange={(e) => {
-                        field.onChange(e.target.value);
-                        onUpdateItem(item.id, "expiryDate", e.target.value);
+                    <Select
+                      value={field.value ? "yes" : "no"}
+                      onValueChange={(value) => {
+                        const isExpirable = value === "yes";
+                        field.onChange(isExpirable);
+                        onUpdateItem(item.id, "expirable", isExpirable);
+                        // Clear expiry date if not expirable
+                        if (!isExpirable) {
+                          onUpdateItem(item.id, "expiryDate", "");
+                          form.setValue(`items.${index}.expiryDate`, "");
+                        }
                       }}
-                    />
+                    >
+                      <SelectTrigger id={`expirable-${item.id}`}>
+                        <SelectValue placeholder="اختر" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="yes">نعم</SelectItem>
+                        <SelectItem value="no">لا</SelectItem>
+                      </SelectContent>
+                    </Select>
                     {fieldState.invalid && (
                       <FieldError errors={[fieldState.error]} />
                     )}
                   </Field>
                 )}
+              />
+
+              <Controller
+                name={`items.${index}.expiryDate`}
+                control={form.control}
+                render={({ field, fieldState }) => {
+                  const isExpirable = form.getValues(
+                    `items.${index}.expirable`,
+                  );
+                  return (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel htmlFor={`expiry-${item.id}`}>
+                        تاريخ الصلاحية
+                      </FieldLabel>
+                      <Input
+                        {...field}
+                        id={`expiry-${item.id}`}
+                        type="date"
+                        aria-invalid={fieldState.invalid}
+                        value={field.value || ""}
+                        onChange={(e) => {
+                          field.onChange(e.target.value);
+                          onUpdateItem(item.id, "expiryDate", e.target.value);
+                        }}
+                        disabled={!isExpirable}
+                        className={
+                          !isExpirable ? "bg-gray-100 cursor-not-allowed" : ""
+                        }
+                      />
+                      {fieldState.invalid && (
+                        <FieldError errors={[fieldState.error]} />
+                      )}
+                    </Field>
+                  );
+                }}
               />
             </div>
           </div>

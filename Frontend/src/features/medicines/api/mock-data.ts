@@ -1,6 +1,7 @@
 export interface Medicine {
   id: string;
   name: string;
+  code?: string;
   category?: string;
   dosageForm?: string;
   strength?: string;
@@ -11,6 +12,7 @@ export const mockMedicines: Medicine[] = [
   {
     id: "1",
     name: "بانادول اكسترا",
+    code: "MED001",
     category: "مسكنات",
     dosageForm: "أقراص",
     strength: "500مجم",
@@ -18,6 +20,7 @@ export const mockMedicines: Medicine[] = [
   {
     id: "2",
     name: "أدفيل",
+    code: "MED002",
     category: "مسكنات",
     dosageForm: "كبسولات",
     strength: "400مجم",
@@ -25,6 +28,7 @@ export const mockMedicines: Medicine[] = [
   {
     id: "3",
     name: "أسبيرين",
+    code: "MED003",
     category: "مسكنات",
     dosageForm: "أقراص",
     strength: "100مجم",
@@ -32,6 +36,7 @@ export const mockMedicines: Medicine[] = [
   {
     id: "4",
     name: "بروفين",
+    code: "MED004",
     category: "مسكنات",
     dosageForm: "أقراص",
     strength: "200مجم",
@@ -39,6 +44,7 @@ export const mockMedicines: Medicine[] = [
   {
     id: "5",
     name: "فولتارين",
+    code: "MED005",
     category: "مسكنات",
     dosageForm: "أقراص",
     strength: "50مجم",
@@ -749,6 +755,18 @@ const additionalMedicines = [
   "مغنيسيوم شراب",
 ];
 
+// Helper function to generate medicine codes
+function generateMedicineCode(index: number): string {
+  return `MED${String(index).padStart(3, "0")}`;
+}
+
+// Add codes to existing medicines (first 80)
+for (let i = 0; i < mockMedicines.length; i++) {
+  if (!mockMedicines[i].code) {
+    mockMedicines[i].code = generateMedicineCode(i + 1);
+  }
+}
+
 // Generate 120 additional medicines (IDs 81-200)
 for (let i = 0; i < additionalMedicines.length; i++) {
   const medicineName = additionalMedicines[i];
@@ -793,6 +811,7 @@ for (let i = 0; i < additionalMedicines.length; i++) {
   mockMedicines.push({
     id: (81 + i).toString(),
     name: medicineName,
+    code: generateMedicineCode(81 + i),
     category: categories[Math.floor(Math.random() * categories.length)],
     dosageForm: dosageForms[Math.floor(Math.random() * dosageForms.length)],
     strength: strengths[Math.floor(Math.random() * strengths.length)],
