@@ -10,4 +10,5 @@ export interface SalesStats {
   todaySales: number;
   todayProfit: number;
   todayInvoices: number;
+  totalCustomers: number;
 }

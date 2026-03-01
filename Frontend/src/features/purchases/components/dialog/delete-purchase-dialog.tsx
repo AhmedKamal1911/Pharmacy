@@ -18,18 +18,18 @@ interface DeletePurchaseDialogProps {
   purchase: Purchase | null;
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onPurchaseDeleted?: (purchaseId: string) => void;
+  onPurchaseCancelled?: (purchaseId: string) => void;
 }
 
 export function DeletePurchaseDialog({
   purchase,
   open,
   onOpenChange,
-  onPurchaseDeleted,
+  onPurchaseCancelled,
 }: DeletePurchaseDialogProps) {
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const handleDelete = async () => {
+  const handleCancel = async () => {
     if (!purchase) return;
 
     setIsLoading(true);
@@ -39,18 +39,19 @@ export function DeletePurchaseDialog({
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Call the callback if provided
-      if (onPurchaseDeleted) {
-        onPurchaseDeleted(purchase.id);
+      if (onPurchaseCancelled) {
+        onPurchaseCancelled(purchase.id);
       }
 
-      toast.success("تم حذف فاتورة المشتريات بنجاح!", {
-        description: `تم حذف فاتورة رقم ${purchase.invoiceNumber} من النظام بنجاح.`,
+      toast.success("تم إلغاء فاتورة المشتريات بنجاح!", {
+        description: `تم إلغاء فاتورة رقم ${purchase.invoiceNumber} وتغيير حالتها إلى ملغي.`,
       });
 
       onOpenChange(false);
     } catch {
-      toast.error("فشل في حذف الفاتورة", {
-        description: "حدث خطأ أثناء حذف فاتورة المشتريات. يرجى المحاولة مرة أخرى.",
+      toast.error("فشل في إلغاء الفاتورة", {
+        description:
+          "حدث خطأ أثناء إلغاء فاتورة المشتريات. يرجى المحاولة مرة أخرى.",
       });
     } finally {
       setIsLoading(false);
@@ -63,27 +64,25 @@ export function DeletePurchaseDialog({
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
-            تأكيد الحذف
+            تأكيد الإلغاء
           </AlertDialogTitle>
           <AlertDialogDescription className="text-right">
-            هل أنت متأكد من أنك تريد حذف فاتورة المشتريات رقم{" "}
+            هل أنت متأكد من أنك تريد إلغاء فاتورة المشتريات رقم{" "}
             <span className="font-semibold">{purchase?.invoiceNumber}</span>؟
             <br />
             <span className="text-destructive">
-              هذا الإجراء لا يمكن التراجع عنه وسيؤدي إلى حذف جميع بيانات الفاتورة.
+              هذا الإجراء سيغير حالة الفاتورة إلى "ملغي" وستبقى في الجدول.
             </span>
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="flex-row-reverse justify-start gap-2">
-          <AlertDialogCancel disabled={isLoading}>
-            إلغاء
-          </AlertDialogCancel>
+          <AlertDialogCancel disabled={isLoading}>إلغاء</AlertDialogCancel>
           <AlertDialogAction
-            onClick={handleDelete}
+            onClick={handleCancel}
             disabled={isLoading}
             className="bg-destructive hover:bg-destructive/90"
           >
-            {isLoading ? "جاري الحذف..." : "حذف"}
+            {isLoading ? "جاري الإلغاء..." : "تأكيد الإلغاء"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

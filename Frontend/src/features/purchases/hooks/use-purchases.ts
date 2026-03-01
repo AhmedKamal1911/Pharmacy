@@ -1,6 +1,11 @@
 import { useMemo, useState } from "react";
 import { useSearchParams } from "react-router";
-import { purchasesMock, deletePurchase } from "../api/mock-data";
+import {
+  purchasesMock,
+  deletePurchase,
+  cancelPurchase,
+  returnPurchase,
+} from "../api/mock-data";
 
 export function usePurchases(supplierIdParam?: string) {
   const [searchParams] = useSearchParams();
@@ -28,11 +33,31 @@ export function usePurchases(supplierIdParam?: string) {
     return success;
   };
 
+  const handleCancelPurchase = (id: string) => {
+    const success = cancelPurchase(id);
+    if (success) {
+      // Force re-render to update the list
+      forceUpdate({});
+    }
+    return success;
+  };
+
+  const handleReturnPurchase = (id: string) => {
+    const success = returnPurchase(id);
+    if (success) {
+      // Force re-render to update the list
+      forceUpdate({});
+    }
+    return success;
+  };
+
   return {
     purchases,
     isLoading: false,
     isError: false,
     supplierId,
     deletePurchase: handleDeletePurchase,
+    cancelPurchase: handleCancelPurchase,
+    returnPurchase: handleReturnPurchase,
   };
 }

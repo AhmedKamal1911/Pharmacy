@@ -86,23 +86,7 @@ export default function EditPurchasePage() {
   const totals = calculateTotals();
 
   // Add New Item
-  const addItem = () => {
-    const newItem: PurchaseItem = {
-      id: Date.now().toString(),
-      medicineId: "",
-      medicineCode: "",
-      medicineName: "",
-      quantity: 1,
-      unitsPerPackage: 1,
-      salePrice: 0,
-      tax: 14,
-      mainDiscount: 0,
-      extraDiscount: 0,
-      cost: 0,
-      expiryDate: "",
-      expirable: false,
-      bonus: 0,
-    };
+  const addItem = (newItem: PurchaseItem) => {
     setItems([...items, newItem]);
   };
 
@@ -110,7 +94,7 @@ export default function EditPurchasePage() {
   const updateItem = (
     id: string,
     field: keyof PurchaseItem,
-    value: string | number | boolean,
+    value: string | number | boolean | undefined,
   ) => {
     setItems(
       items.map((item) =>
@@ -121,9 +105,7 @@ export default function EditPurchasePage() {
 
   // Remove Item
   const removeItem = (id: string) => {
-    if (items.length > 1) {
-      setItems(items.filter((item) => item.id !== id));
-    }
+    setItems(items.filter((item) => item.id !== id));
   };
 
   // Update Invoice

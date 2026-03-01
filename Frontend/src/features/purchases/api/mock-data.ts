@@ -19,7 +19,7 @@ export const purchasesMock: Purchase[] = [
     supplierId: "2",
     supplierName: "مستودع الأدوية المركزي",
     total: 3000,
-    status: "PENDING",
+    status: "CANCELLED",
   },
   {
     id: "3",
@@ -49,7 +49,7 @@ export const purchasesMock: Purchase[] = [
     supplierId: "2",
     supplierName: "مستودع الأدوية المركزي",
     total: 4200,
-    status: "PENDING",
+    status: "RETURNED",
   },
   {
     id: "6",
@@ -341,6 +341,30 @@ export const mockPurchaseInvoices: PurchaseInvoice[] = [
 // Function to get invoice by ID
 export const getPurchaseInvoiceById = (id: string): PurchaseInvoice | null => {
   return mockPurchaseInvoices.find((invoice) => invoice.id === id) || null;
+};
+
+// Function to update purchase status to CANCELLED
+export const cancelPurchase = (id: string): boolean => {
+  const index = purchasesMock.findIndex((p) => p.id === id);
+  if (index !== -1) {
+    purchasesMock[index].status = "CANCELLED";
+    console.log(`Purchase ${id} status updated to CANCELLED`);
+    return true;
+  }
+  console.log(`Purchase with id ${id} not found`);
+  return false;
+};
+
+// Function to update purchase status to RETURNED
+export const returnPurchase = (id: string): boolean => {
+  const index = purchasesMock.findIndex((p) => p.id === id);
+  if (index !== -1) {
+    purchasesMock[index].status = "RETURNED";
+    console.log(`Purchase ${id} status updated to RETURNED`);
+    return true;
+  }
+  console.log(`Purchase with id ${id} not found`);
+  return false;
 };
 
 // Function to delete a purchase (simulated - doesn't actually delete from array)

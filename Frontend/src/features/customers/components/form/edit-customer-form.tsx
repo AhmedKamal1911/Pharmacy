@@ -46,11 +46,13 @@ const editFormSchema = z.object({
   localDiscount: z
     .number()
     .min(0)
-    .max(100, "يجب أن يكون الخصم المحلي بين 0 و 100"),
+    .max(100, "يجب أن يكون الخصم المحلي بين 0 و 100")
+    .optional(),
   importDiscount: z
     .number()
     .min(0)
-    .max(100, "يجب أن يكون خصم الاستيراد بين 0 و 100"),
+    .max(100, "يجب أن يكون خصم الاستيراد بين 0 و 100")
+    .optional(),
 });
 
 export type EditCustomerFormData = z.infer<typeof editFormSchema>;
@@ -206,58 +208,6 @@ export function EditCustomerForm({
                 step="0.01"
                 aria-invalid={fieldState.invalid}
                 placeholder="0.00"
-                onChange={(e) =>
-                  field.onChange(parseFloat(e.target.value) || 0)
-                }
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-
-        <Controller
-          name="localDiscount"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="edit-customer-local-discount">
-                الخصم المحلي (%)
-              </FieldLabel>
-              <Input
-                {...field}
-                id="edit-customer-local-discount"
-                type="number"
-                min="0"
-                max="100"
-                step="0.1"
-                aria-invalid={fieldState.invalid}
-                placeholder="0"
-                onChange={(e) =>
-                  field.onChange(parseFloat(e.target.value) || 0)
-                }
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-
-        <Controller
-          name="importDiscount"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="edit-customer-import-discount">
-                خصم الاستيراد (%)
-              </FieldLabel>
-              <Input
-                {...field}
-                id="edit-customer-import-discount"
-                type="number"
-                min="0"
-                max="100"
-                step="0.1"
-                aria-invalid={fieldState.invalid}
-                placeholder="0"
                 onChange={(e) =>
                   field.onChange(parseFloat(e.target.value) || 0)
                 }

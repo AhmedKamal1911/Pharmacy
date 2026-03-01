@@ -22,8 +22,6 @@ export interface Customer {
   isCashOnly: boolean;
   balance: number;
   creditLimit: number;
-  localDiscount: number;
-  importDiscount: number;
   lastTransactionAt?: string;
   loyalty?: Loyalty;
 }

@@ -1,4 +1,4 @@
-import { MoreHorizontal, Eye, Edit, Trash2 } from "lucide-react";
+import { MoreHorizontal, Eye, Edit, Trash2, RotateCcw } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -16,6 +16,7 @@ interface PurchaseActionsProps {
   onView?: (purchase: Purchase) => void;
   onEdit?: (purchase: Purchase) => void;
   onDelete?: (purchase: Purchase) => void;
+  onReturn?: (purchase: Purchase) => void;
 }
 
 export function PurchaseActions({
@@ -23,6 +24,7 @@ export function PurchaseActions({
   onView,
   onEdit,
   onDelete,
+  onReturn,
 }: PurchaseActionsProps) {
   return (
     <DropdownMenu>
@@ -43,14 +45,24 @@ export function PurchaseActions({
           <Edit className="ml-2 h-4 w-4" />
           تعديل
         </DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={() => onDelete?.(purchase)}
-          className="text-red-600"
-        >
-          <Trash2 className="ml-2 h-4 w-4" />
-          حذف
-        </DropdownMenuItem>
+        {purchase.status !== "RETURNED" && (
+          <DropdownMenuItem onClick={() => onReturn?.(purchase)}>
+            <RotateCcw className="ml-2 h-4 w-4" />
+            مرتجع
+          </DropdownMenuItem>
+        )}
+        {purchase.status !== "CANCELLED" && (
+          <>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={() => onDelete?.(purchase)}
+              className="text-red-600"
+            >
+              <Trash2 className="ml-2 h-4 w-4" />
+              حذف
+            </DropdownMenuItem>
+          </>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

@@ -8,6 +8,7 @@ import {
   ShoppingCart,
   Truck,
   LayoutDashboard,
+  ArrowLeftRight,
 } from "lucide-react";
 
 import {
@@ -31,7 +32,7 @@ const NAV_ITEMS = [
     items: [
       { title: "لوحة التحكم", url: "/", icon: LayoutDashboard },
       { title: "المبيعات", url: "/sales", icon: TrendingUp },
-      { title: "المخزون", url: "/inventory", icon: PackageSearch },
+      { title: "المخزون", url: "/stock", icon: PackageSearch },
     ],
   },
   {
@@ -40,6 +41,7 @@ const NAV_ITEMS = [
       { title: "العملاء", url: "/customers", icon: Users },
       { title: "الموردين", url: "/suppliers", icon: Truck },
       { title: "المشتريات", url: "/purchases", icon: ShoppingCart },
+      { title: "المرتجعات", url: "/returns", icon: ArrowLeftRight },
       { title: "التقارير", url: "/reports", icon: TrendingUp },
       { title: "الإعدادات", url: "/settings", icon: Settings },
     ],

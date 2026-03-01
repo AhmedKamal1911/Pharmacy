@@ -7,14 +7,25 @@ import { usePurchases } from "@/features/purchases/hooks/use-purchases";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { DeletePurchaseDialog } from "@/features/purchases/components/dialog/delete-purchase-dialog";
+import { ReturnPurchaseDialog } from "@/features/purchases/components/dialog/return-purchase-dialog";
 import type { Purchase } from "@/features/purchases/types";
 
 export default function PurchasesPage() {
-  const { purchases, isLoading, isError, supplierId, deletePurchase } =
-    usePurchases();
+  const {
+    purchases,
+    isLoading,
+    isError,
+    supplierId,
+    cancelPurchase,
+    returnPurchase,
+  } = usePurchases();
   const navigate = useNavigate();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [purchaseToDelete, setPurchaseToDelete] = useState<Purchase | null>(
+    null,
+  );
+  const [returnDialogOpen, setReturnDialogOpen] = useState(false);
+  const [purchaseToReturn, setPurchaseToReturn] = useState<Purchase | null>(
     null,
   );
 
@@ -34,9 +45,25 @@ export default function PurchasesPage() {
     setDeleteDialogOpen(true);
   };
 
-  // Handle Purchase Deleted
-  const handlePurchaseDeleted = (purchaseId: string) => {
-    const success = deletePurchase(purchaseId);
+  // Handle Return Purchase
+  const handleReturnPurchase = (purchase: Purchase) => {
+    setPurchaseToReturn(purchase);
+    setReturnDialogOpen(true);
+  };
+
+  // Handle Purchase Returned
+  const handlePurchaseReturned = (purchaseId: string) => {
+    const success = returnPurchase(purchaseId);
+    if (success) {
+      setReturnDialogOpen(false);
+      setPurchaseToReturn(null);
+    }
+    return success;
+  };
+
+  // Handle Purchase Cancelled
+  const handlePurchaseCancelled = (purchaseId: string) => {
+    const success = cancelPurchase(purchaseId);
     if (success) {
       setDeleteDialogOpen(false);
       setPurchaseToDelete(null);
@@ -48,6 +75,7 @@ export default function PurchasesPage() {
     handleViewPurchase,
     handleEditPurchase,
     handleDeletePurchase,
+    handleReturnPurchase,
   );
 
   return (
@@ -107,7 +135,15 @@ export default function PurchasesPage() {
         purchase={purchaseToDelete}
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
-        onPurchaseDeleted={handlePurchaseDeleted}
+        onPurchaseCancelled={handlePurchaseCancelled}
+      />
+
+      {/* Return Purchase Dialog */}
+      <ReturnPurchaseDialog
+        purchase={purchaseToReturn}
+        open={returnDialogOpen}
+        onOpenChange={setReturnDialogOpen}
+        onPurchaseReturned={handlePurchaseReturned}
       />
     </div>
   );

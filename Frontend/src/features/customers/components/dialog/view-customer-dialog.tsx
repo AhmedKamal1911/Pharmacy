@@ -2,7 +2,6 @@ import {
   Phone,
   MapPin,
   CreditCard,
-  Percent,
   User,
   Calendar,
   TrendingUp,
@@ -18,7 +17,6 @@ import {
 } from "@/components/ui/dialog";
 import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Separator } from "@/components/ui/separator";
 import type { Customer } from "../../types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MoneyAmount } from "../ui/money-amount";
@@ -169,55 +167,23 @@ export function ViewCustomerDialog({
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4 px-2">
-                  <div className="grid grid-cols-2 gap-2">
-                    <div className="bg-muted/30 rounded-lg p-2">
-                      <div className="text-xs text-muted-foreground mb-1">
-                        حد الائتمان
-                      </div>
-                      <div className="flex items-center justify-start">
-                        <MoneyAmount
-                          amount={customer.creditLimit}
-                          showIcon={false}
-                        />
-                      </div>
+                  <div className="bg-muted/30 rounded-lg p-2">
+                    <div className="text-xs text-muted-foreground mb-1">
+                      حد الائتمان
                     </div>
-                    <div className="bg-muted/30 rounded-lg p-2">
-                      <div className="text-xs text-muted-foreground mb-1">
-                        الرصيد الحالي
-                      </div>
-                      <div className="flex items-center justify-start">
-                        <MoneyAmount
-                          amount={customer.balance}
-                          showIcon={false}
-                        />
-                      </div>
+                    <div className="flex items-center justify-start">
+                      <MoneyAmount
+                        amount={customer.creditLimit}
+                        showIcon={false}
+                      />
                     </div>
                   </div>
-
-                  <Separator className="my-2" />
-
-                  <div className="grid grid-cols-2 gap-3">
-                    <div className="flex items-center gap-2 p-2 bg-blue-50/70 border border-blue-200/50 rounded-lg">
-                      <Percent className="h-4 w-4 text-blue-600" />
-                      <div className="flex-1">
-                        <div className="text-xs text-blue-600">
-                          الخصم المحلي
-                        </div>
-                        <div className="font-bold text-sm text-blue-700">
-                          {customer.localDiscount}%
-                        </div>
-                      </div>
+                  <div className="bg-muted/30 rounded-lg p-2">
+                    <div className="text-xs text-muted-foreground mb-1">
+                      الرصيد الحالي
                     </div>
-                    <div className="flex items-center gap-2 p-2 bg-purple-50/70 border border-purple-200/50 rounded-lg">
-                      <Percent className="h-4 w-4 text-purple-600" />
-                      <div className="flex-1">
-                        <div className="text-xs text-purple-600">
-                          خصم الاستيراد
-                        </div>
-                        <div className="font-bold text-sm text-purple-700">
-                          {customer.importDiscount}%
-                        </div>
-                      </div>
+                    <div className="flex items-center justify-start">
+                      <MoneyAmount amount={customer.balance} showIcon={false} />
                     </div>
                   </div>
                 </CardContent>

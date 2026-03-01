@@ -11,13 +11,17 @@ export function PurchaseStatusBadge({ status }: PurchaseStatusBadgeProps) {
       label: "مدفوع",
       variant: "default" as const,
     },
-    PENDING: {
-      label: "معلق",
-      variant: "secondary" as const,
-    },
     OVERDUE: {
       label: "متأخر",
       variant: "destructive" as const,
+    },
+    CANCELLED: {
+      label: "ملغي",
+      variant: "secondary" as const,
+    },
+    RETURNED: {
+      label: "مرتجع",
+      variant: "outline" as const,
     },
   };
 

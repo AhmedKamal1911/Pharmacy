@@ -4,9 +4,11 @@ import {
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
+  getSortedRowModel,
   flexRender,
   type ColumnDef,
   type ColumnFiltersState,
+  type SortingState,
 } from "@tanstack/react-table";
 
 import {
@@ -48,16 +50,20 @@ export function SupplierTable<TData, TValue>({
   meta,
 }: DataTableProps<TData, TValue>) {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [sorting, setSorting] = useState<SortingState>([]);
 
   const table = useReactTable({
     data,
     columns,
     state: {
       columnFilters,
+      sorting,
     },
     onColumnFiltersChange: setColumnFilters,
+    onSortingChange: setSorting,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     initialState: {
       pagination: {
@@ -143,6 +149,72 @@ export function SupplierTable<TData, TValue>({
             <SelectItem value="PAID">مدفوع</SelectItem>
             <SelectItem value="DUE">مستحق</SelectItem>
             <SelectItem value="OVERDUE">متأخر</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Sort by settlement date */}
+        <Select
+          value={
+            sorting.find((s) => s.id === "settlementDate")?.desc
+              ? "desc"
+              : sorting.find((s) => s.id === "settlementDate")
+                ? "asc"
+                : ""
+          }
+          onValueChange={(value) => {
+            if (value === "all" || value === "") {
+              setSorting(sorting.filter((s) => s.id !== "settlementDate"));
+            } else {
+              setSorting([{ id: "settlementDate", desc: value === "desc" }]);
+            }
+          }}
+        >
+          <SelectTrigger className="w-42">
+            <SelectValue placeholder="ترتيب بتاريخ التقفيل" />
+          </SelectTrigger>
+          <SelectContent
+            position="popper"
+            side="bottom"
+            align="start"
+            sideOffset={2}
+            avoidCollisions={false}
+          >
+            <SelectItem value="all">كل التواريخ</SelectItem>
+            <SelectItem value="desc">الأحدث أولاً</SelectItem>
+            <SelectItem value="asc">الأقدم أولاً</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* Sort by debit amount */}
+        <Select
+          value={
+            sorting.find((s) => s.id === "debit")?.desc
+              ? "desc"
+              : sorting.find((s) => s.id === "debit")
+                ? "asc"
+                : ""
+          }
+          onValueChange={(value) => {
+            if (value === "all" || value === "") {
+              setSorting(sorting.filter((s) => s.id !== "debit"));
+            } else {
+              setSorting([{ id: "debit", desc: value === "desc" }]);
+            }
+          }}
+        >
+          <SelectTrigger className="w-40">
+            <SelectValue placeholder="ترتيب بالمديونية" />
+          </SelectTrigger>
+          <SelectContent
+            position="popper"
+            side="bottom"
+            align="start"
+            sideOffset={2}
+            avoidCollisions={false}
+          >
+            <SelectItem value="all">كل المديونيات</SelectItem>
+            <SelectItem value="desc">الأعلى أولاً</SelectItem>
+            <SelectItem value="asc">الأقل أولاً</SelectItem>
           </SelectContent>
         </Select>
       </div>

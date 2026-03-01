@@ -37,14 +37,6 @@ const formSchema = z.object({
   isCashOnly: z.boolean(),
   balance: z.number(),
   creditLimit: z.number().min(0, "يجب أن يكون حد الائتمان غير سالب"),
-  localDiscount: z
-    .number()
-    .min(0)
-    .max(100, "يجب أن يكون الخصم المحلي بين 0 و 100"),
-  importDiscount: z
-    .number()
-    .min(0)
-    .max(100, "يجب أن يكون خصم الاستيراد بين 0 و 100"),
 });
 
 export type CustomerFormData = z.infer<typeof formSchema>;
@@ -70,8 +62,6 @@ export function AddCustomerForm({
       isCashOnly: false,
       balance: 0,
       creditLimit: 0,
-      localDiscount: 0,
-      importDiscount: 0,
       ...initialData,
     },
   });
@@ -200,58 +190,6 @@ export function AddCustomerForm({
                 step="0.01"
                 aria-invalid={fieldState.invalid}
                 placeholder="0.00"
-                onChange={(e) =>
-                  field.onChange(parseFloat(e.target.value) || 0)
-                }
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-
-        <Controller
-          name="localDiscount"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="customer-local-discount">
-                الخصم المحلي (%)
-              </FieldLabel>
-              <Input
-                {...field}
-                id="customer-local-discount"
-                type="number"
-                min="0"
-                max="100"
-                step="0.1"
-                aria-invalid={fieldState.invalid}
-                placeholder="0"
-                onChange={(e) =>
-                  field.onChange(parseFloat(e.target.value) || 0)
-                }
-              />
-              {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
-            </Field>
-          )}
-        />
-
-        <Controller
-          name="importDiscount"
-          control={form.control}
-          render={({ field, fieldState }) => (
-            <Field data-invalid={fieldState.invalid}>
-              <FieldLabel htmlFor="customer-import-discount">
-                خصم الاستيراد (%)
-              </FieldLabel>
-              <Input
-                {...field}
-                id="customer-import-discount"
-                type="number"
-                min="0"
-                max="100"
-                step="0.1"
-                aria-invalid={fieldState.invalid}
-                placeholder="0"
                 onChange={(e) =>
                   field.onChange(parseFloat(e.target.value) || 0)
                 }

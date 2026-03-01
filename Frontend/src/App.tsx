@@ -8,6 +8,12 @@ import PurchaseInvoicePage from "./pages/purchase-invoice-page";
 import AddPurchasePage from "./pages/add-purchase-page";
 import EditPurchasePage from "./pages/edit-purchase-page";
 import SupplierPurchasesPage from "./pages/supplier-purchases-page";
+import BestSellingPage from "@/features/sales/pages/best-selling-page";
+import LowStockPage from "@/features/sales/pages/low-stock-page";
+import ExpiringPage from "@/features/sales/pages/expiring-page";
+import StockPage from "@/pages/stock-page";
+import InvoicesPage from "@/features/sales/pages/invoices-page";
+import { ReturnsPage } from "@/pages/returns-page";
 
 // Placeholder components
 const About = () => <div className=" text-lg">عن نظام إدارة الصيدلية v1.0</div>;
@@ -25,6 +31,11 @@ function App() {
         {/* Matches Sidebar */}
         <Route path="/sales" element={<SalesPage />} />{" "}
         {/* Added sales route */}
+        <Route path="/sales/best-selling" element={<BestSellingPage />} />{" "}
+        <Route path="/sales/low-stock" element={<LowStockPage />} />{" "}
+        <Route path="/sales/expiring" element={<ExpiringPage />} />{" "}
+        <Route path="/stock" element={<StockPage />} />{" "}
+        <Route path="/sales/invoices" element={<InvoicesPage />} />{" "}
         <Route path="/customers" element={<CustomersPage />} />{" "}
         <Route path="/suppliers" element={<SuppliersPage />} />{" "}
         <Route
@@ -36,6 +47,7 @@ function App() {
         <Route path="/purchases/new" element={<AddPurchasePage />} />{" "}
         <Route path="/purchases/:id" element={<PurchaseInvoicePage />} />{" "}
         <Route path="/purchases/:id/edit" element={<EditPurchasePage />} />{" "}
+        <Route path="/returns" element={<ReturnsPage />} />{" "}
         {/* Matches Sidebar */}
         <Route path="/settings" element={<Settings />} />
         <Route path="/about" element={<About />} />

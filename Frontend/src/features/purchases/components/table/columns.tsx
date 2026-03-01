@@ -7,6 +7,7 @@ export function createPurchaseColumns(
   onView?: (purchase: Purchase) => void,
   onEdit?: (purchase: Purchase) => void,
   onDelete?: (purchase: Purchase) => void,
+  onReturn?: (purchase: Purchase) => void,
 ): ColumnDef<Purchase>[] {
   return [
     {
@@ -89,6 +90,7 @@ export function createPurchaseColumns(
               onView={onView}
               onEdit={onEdit}
               onDelete={onDelete}
+              onReturn={onReturn}
             />
           </div>
         );

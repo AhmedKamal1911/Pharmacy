@@ -75,8 +75,6 @@ export function EditCustomerDialog({
         isCashOnly: customer.isCashOnly,
         balance: customer.balance,
         creditLimit: customer.creditLimit,
-        localDiscount: customer.localDiscount,
-        importDiscount: customer.importDiscount,
       }
     : undefined;
 

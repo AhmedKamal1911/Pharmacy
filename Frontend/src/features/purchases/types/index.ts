@@ -1,5 +1,5 @@
 // حالة الفاتورة
-export type PurchaseStatus = "PAID" | "PENDING" | "OVERDUE";
+export type PurchaseStatus = "PAID" | "OVERDUE" | "CANCELLED" | "RETURNED";
 
 // نوع بيانات فاتورة واحدة في جدول المشتريات
 export interface Purchase {
