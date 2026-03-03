@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import { DeletePurchaseDialog } from "@/features/purchases/components/dialog/delete-purchase-dialog";
 import { ReturnPurchaseDialog } from "@/features/purchases/components/dialog/return-purchase-dialog";
-import type { Purchase } from "@/features/purchases/types";
+import type { Purchase, PurchaseReturn } from "@/features/purchases/types";
 
 export default function PurchasesPage() {
   const {
@@ -17,7 +17,7 @@ export default function PurchasesPage() {
     isError,
     supplierId,
     cancelPurchase,
-    returnPurchase,
+    returnPurchaseItems,
   } = usePurchases();
   const navigate = useNavigate();
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -52,8 +52,11 @@ export default function PurchasesPage() {
   };
 
   // Handle Purchase Returned
-  const handlePurchaseReturned = (purchaseId: string) => {
-    const success = returnPurchase(purchaseId);
+  const handlePurchaseReturned = (
+    purchaseId: string,
+    returnData: PurchaseReturn,
+  ) => {
+    const success = returnPurchaseItems(purchaseId, returnData);
     if (success) {
       setReturnDialogOpen(false);
       setPurchaseToReturn(null);

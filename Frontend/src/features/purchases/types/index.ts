@@ -1,5 +1,10 @@
 // حالة الفاتورة
-export type PurchaseStatus = "PAID" | "OVERDUE" | "CANCELLED" | "RETURNED";
+export type PurchaseStatus =
+  | "PAID"
+  | "OVERDUE"
+  | "CANCELLED"
+  | "RETURNED"
+  | "PARTIALLY_RETURNED";
 
 // نوع بيانات فاتورة واحدة في جدول المشتريات
 export interface Purchase {
@@ -33,6 +38,12 @@ export interface PurchaseItem {
   medicineName: string; // للعرض فقط (snapshot وقت الفاتورة)
   medicineCode?: string; // كود الصنف (اختياري)
 
+  // Variant information
+  variantId?: string; // معرف المتغير المحدد
+  variantPrice?: number; // سعر المتغير وقت الشراء
+  variantExpiryDate?: string; // تاريخ انتهاء المتغير
+  variantBatchNumber?: string; // رقم باتش المتغير
+
   quantity: number;
   unitsPerPackage: number;
 
@@ -49,6 +60,8 @@ export interface PurchaseItem {
   bonus: number;
 
   expirable: boolean;
+
+  isNewMedicine?: boolean; // لتحديد ما إذا كان الصنف جديداً
 }
 
 // بيانات المجموعات
@@ -60,4 +73,19 @@ export interface InvoiceTotals {
   taxTotal: number; // إجمالي الضريبة
   extraCosts?: number; // تكاليف إضافية
   extraDiscount?: number; // خصم إضافي
+}
+
+// بيانات المرتجعات
+export interface ReturnItem {
+  itemId: string; // معرف الصنف في الفاتورة الأصلية
+  quantity: number; // الكمية المرتجعة
+  reason?: string; // سبب الإرجاع
+}
+
+export interface PurchaseReturn {
+  purchaseId: string; // معرف الفاتورة الأصلية
+  returnDate: string; // تاريخ الإرجاع
+  items: ReturnItem[]; // الأصناف المرتجعة
+  returnType: "FULL" | "PARTIAL"; // نوع الإرجاع
+  totalRefund: number; // إجمالي المبلغ المسترد
 }

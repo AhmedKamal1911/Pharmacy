@@ -12,7 +12,10 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { MedicineSearch, MedicineNameSearch } from "./medicine-search";
+import {
+  MedicineVariantSearch,
+  MedicineNameVariantSearch,
+} from "./medicine-variant-search";
 import { medicines } from "@/data/medicines";
 import type { UseFormReturn } from "react-hook-form";
 import { useWatch } from "react-hook-form";
@@ -40,7 +43,12 @@ export default function SalesTable({ fields, form, remove }: SalesTableProps) {
         const dsc = item?.discount || 0;
         const vt = item?.vat || 0;
         const medicineId = item?.medicineId || "";
-        const selectedMedicine = medicines.find((m) => m.id === medicineId);
+        const selectedMedicine = medicines.find((m) =>
+          m.variants.some((v) => v.id === medicineId),
+        );
+        const selectedVariant = selectedMedicine?.variants.find(
+          (v) => v.id === medicineId,
+        );
 
         const lineTotal = qty * prc - qty * prc * (dsc / 100) + vt;
 
@@ -48,17 +56,17 @@ export default function SalesTable({ fields, form, remove }: SalesTableProps) {
           <TableRow key={field.id} className="h-12 hover:bg-slate-50">
             {/* الكود */}
             <TableCell className="p-1 border">
-              <MedicineSearch
+              <MedicineVariantSearch
                 value={item?.medicineId || ""}
                 onChange={(value) => {
                   form.setValue(`items.${index}.medicineId`, value);
                 }}
-                onMedicineSelect={(medicine) => {
+                onMedicineSelect={(medicine, variant) => {
                   form.setValue(`items.${index}.medicineName`, medicine.name);
-                  form.setValue(`items.${index}.price`, medicine.price);
+                  form.setValue(`items.${index}.price`, variant.price);
                   form.setValue(
                     `items.${index}.expiryDate`,
-                    medicine.expiryDate || "",
+                    variant.expiryDate || "",
                   );
                 }}
               />
@@ -66,17 +74,17 @@ export default function SalesTable({ fields, form, remove }: SalesTableProps) {
 
             {/* اسم الصنف */}
             <TableCell className="p-1 border text-right">
-              <MedicineNameSearch
+              <MedicineNameVariantSearch
                 value={item?.medicineName || ""}
                 onChange={(value) => {
                   form.setValue(`items.${index}.medicineName`, value);
                 }}
-                onMedicineSelect={(medicine) => {
-                  form.setValue(`items.${index}.medicineId`, medicine.id);
-                  form.setValue(`items.${index}.price`, medicine.price);
+                onMedicineSelect={(medicine, variant) => {
+                  form.setValue(`items.${index}.medicineId`, variant.id);
+                  form.setValue(`items.${index}.price`, variant.price);
                   form.setValue(
                     `items.${index}.expiryDate`,
-                    medicine.expiryDate || "",
+                    variant.expiryDate || "",
                   );
                 }}
               />
@@ -132,7 +140,7 @@ export default function SalesTable({ fields, form, remove }: SalesTableProps) {
               <Input
                 type="text"
                 placeholder="لا يوجد صلاحية"
-                value={selectedMedicine?.expiryDate || ""}
+                value={selectedVariant?.expiryDate || ""}
                 className="h-8 border-none text-center text-xs bg-gray-50 cursor-default select-none"
                 readOnly
               />

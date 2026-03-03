@@ -109,7 +109,8 @@ export function PurchasesTable<TData, TValue>({
             <SelectItem value="PAID">مدفوع</SelectItem>
             <SelectItem value="OVERDUE">متأخر</SelectItem>
             <SelectItem value="CANCELLED">ملغي</SelectItem>
-            <SelectItem value="RETURNED">مرتجع</SelectItem>
+            <SelectItem value="RETURNED">مرتجع كامل</SelectItem>
+            <SelectItem value="PARTIALLY_RETURNED">مرتجع جزئي</SelectItem>
           </SelectContent>
         </Select>
       </div>

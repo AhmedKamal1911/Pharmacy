@@ -73,9 +73,7 @@ export const stockColumns: ColumnDef<StockItem>[] = [
               : "text-green-600";
       return (
         <div className="text-center">
-          <div className={`font-bold text-lg ${stockColor}`}>
-            {stock.toLocaleString()}
-          </div>
+          <div className={`font-bold text-lg ${stockColor}`}>{stock}</div>
           <div className="text-sm text-muted-foreground">وحدة</div>
         </div>
       );

@@ -1,11 +1,23 @@
 // Shared medicines data for the entire application
+export interface MedicineVariant {
+  id: string;
+  price: number;
+  stock: number;
+  expiryDate?: string;
+  batchNumber?: string;
+}
+
 export interface Medicine {
   id: string;
   name: string;
-  price: number;
+  code?: string;
   category: string;
-  stock: number;
-  expiryDate?: string;
+  description?: string;
+  basePrice?: number; // السعر الأساسي للصنف
+  cost?: number; // تكلفة الشراء الأساسية
+  unit?: string; // الوحدة (مثال: علبة، زجاجة)
+  minStock?: number; // الحد الأدنى للمخزون
+  variants: MedicineVariant[];
 }
 
 // Consolidated medicines list from all features
@@ -14,286 +26,655 @@ export const medicines: Medicine[] = [
   {
     id: "MED001",
     name: "بانادول 500مجم",
-    price: 25.5,
+    code: "MED001",
     category: "مسكنات",
-    stock: 150,
-    expiryDate: "12/25",
+    description:
+      "مسكن ألم وخافض حرارة، يستخدم لتخفيف الآلام الخفيفة إلى المتوسطة",
+    basePrice: 30.0,
+    cost: 25.0,
+    unit: "علبة",
+    minStock: 20,
+    variants: [
+      {
+        id: "MED001-V1",
+        price: 25.5,
+        stock: 150,
+        expiryDate: "04/26",
+        batchNumber: "B001",
+      },
+      {
+        id: "MED001-V2",
+        price: 28.0,
+        stock: 80,
+        expiryDate: "12/26",
+        batchNumber: "B002",
+      },
+    ],
   },
   {
     id: "MED002",
     name: "أدفيل",
-    price: 18.0,
+    code: "MED002",
     category: "مسكنات",
-    stock: 89,
-    expiryDate: "08/24",
+    description: "مسكن ألم ومضاد التهاب، يستخدم لتخفيف الآلام والالتهابات",
+    basePrice: 22.0,
+    cost: 18.0,
+    unit: "علبة",
+    minStock: 15,
+    variants: [
+      {
+        id: "MED002-V1",
+        price: 18.0,
+        stock: 89,
+        expiryDate: "05/26",
+        batchNumber: "B003",
+      },
+    ],
   },
   {
     id: "MED003",
     name: "أسبيرين",
-    price: 15.5,
+    code: "MED003",
     category: "مسكنات",
-    stock: 180,
+    description: "مسكن ألم ومضاد التهاب، يمنع تكون جلطات الدم",
+    basePrice: 18.0,
+    cost: 15.5,
+    unit: "علبة",
+    minStock: 25,
+    variants: [
+      {
+        id: "MED003-V1",
+        price: 15.5,
+        stock: 180,
+        expiryDate: "03/26",
+        batchNumber: "B004",
+      },
+      {
+        id: "MED003-V2",
+        price: 17.0,
+        stock: 120,
+        expiryDate: "09/26",
+        batchNumber: "B005",
+      },
+    ],
   },
   {
     id: "MED004",
     name: "بروفين 200مجم",
-    price: 12.5,
+    code: "MED004",
     category: "مسكنات",
-    stock: 200,
+    description: "مسكن ألم ومضاد التهاب، يستخدم لتخفيف الآلام والالتهابات",
+    basePrice: 15.0,
+    cost: 12.5,
+    unit: "علبة",
+    minStock: 30,
+    variants: [
+      {
+        id: "MED004-V1",
+        price: 12.5,
+        stock: 200,
+        expiryDate: "06/26",
+        batchNumber: "B006",
+      },
+    ],
   },
   {
     id: "MED005",
     name: "أوجسيت 400مجم",
-    price: 28.5,
+    code: "MED005",
     category: "مسكنات",
-    stock: 140,
+    description: "مسكن ألم قوي، يستخدم للآلام الشديدة",
+    basePrice: 35.0,
+    cost: 28.5,
+    unit: "علبة",
+    minStock: 10,
+    variants: [
+      {
+        id: "MED005-V1",
+        price: 28.5,
+        stock: 140,
+        expiryDate: "03/26",
+        batchNumber: "B007",
+      },
+      {
+        id: "MED005-V2",
+        price: 32.0,
+        stock: 60,
+        expiryDate: "11/26",
+        batchNumber: "B008",
+      },
+    ],
   },
   {
     id: "MED006",
     name: "كيتورول 50مجم",
-    price: 32.0,
+    code: "MED006",
     category: "مسكنات",
-    stock: 95,
+    variants: [
+      {
+        id: "MED006-V1",
+        price: 32.0,
+        stock: 95,
+        expiryDate: "04/26",
+        batchNumber: "B009",
+      },
+    ],
   },
   {
     id: "MED007",
     name: "فولتارين 50مجم",
-    price: 55.0,
+    code: "MED007",
     category: "مسكنات",
-    stock: 78,
+    variants: [
+      {
+        id: "MED007-V1",
+        price: 55.0,
+        stock: 78,
+        expiryDate: "05/26",
+        batchNumber: "B010",
+      },
+      {
+        id: "MED007-V2",
+        price: 58.0,
+        stock: 45,
+        expiryDate: "02/27",
+        batchNumber: "B011",
+      },
+    ],
   },
   {
     id: "MED008",
     name: "أوجمنتين 1جم",
-    price: 65.0,
+    code: "MED008",
     category: "مضادات حيوية",
-    stock: 23,
-    expiryDate: "03/26",
+    variants: [
+      {
+        id: "MED008-V1",
+        price: 65.0,
+        stock: 23,
+        expiryDate: "03/26",
+        batchNumber: "B012",
+      },
+    ],
   },
   {
     id: "MED009",
     name: "زيثروماكس",
-    price: 35.0,
+    code: "MED009",
     category: "مضادات حيوية",
-    stock: 67,
+    variants: [
+      {
+        id: "MED009-V1",
+        price: 35.0,
+        stock: 67,
+        expiryDate: "04/26",
+        batchNumber: "B013",
+      },
+    ],
   },
   {
     id: "MED010",
     name: "أموكسيل 500مجم",
-    price: 38.0,
+    code: "MED010",
     category: "مضادات حيوية",
-    stock: 90,
+    variants: [
+      {
+        id: "MED010-V1",
+        price: 38.0,
+        stock: 90,
+        expiryDate: "06/26",
+        batchNumber: "B014",
+      },
+      {
+        id: "MED010-V2",
+        price: 42.0,
+        stock: 55,
+        expiryDate: "01/27",
+        batchNumber: "B015",
+      },
+    ],
   },
   {
     id: "MED011",
     name: "زيتامول 500مجم",
-    price: 48.0,
     category: "مضادات حيوية",
-    stock: 65,
+    variants: [
+      {
+        id: "MED011-V1",
+        price: 48.0,
+        stock: 65,
+        expiryDate: "08/26",
+        batchNumber: "B016",
+      },
+    ],
   },
   {
     id: "MED012",
-    name: "أوجسيت 400مجم",
-    price: 28.5,
-    category: "مسكنات",
-    stock: 140,
+    name: "أموكسيل 250مجم",
+    category: "مضادات حيوية",
+    variants: [
+      {
+        id: "MED012-V1",
+        price: 22.0,
+        stock: 140,
+        expiryDate: "07/26",
+        batchNumber: "B017",
+      },
+    ],
   },
 
   // Gastrointestinal
   {
     id: "MED013",
     name: "كونجستال",
-    price: 28.0,
     category: "أمراض معدية",
-    stock: 34,
+    variants: [
+      {
+        id: "MED013-V1",
+        price: 28.0,
+        stock: 34,
+        expiryDate: "09/26",
+        batchNumber: "B018",
+      },
+    ],
   },
   {
     id: "MED014",
     name: "موتيليوم",
-    price: 42.0,
     category: "غثيان",
-    stock: 56,
+    variants: [
+      {
+        id: "MED014-V1",
+        price: 42.0,
+        stock: 56,
+        expiryDate: "10/26",
+        batchNumber: "B019",
+      },
+    ],
   },
   {
     id: "MED015",
     name: "فاموتيدين",
-    price: 22.0,
     category: "منشطات حركة",
-    stock: 120,
+    variants: [
+      {
+        id: "MED015-V1",
+        price: 22.0,
+        stock: 120,
+        expiryDate: "11/26",
+        batchNumber: "B020",
+      },
+    ],
   },
   {
     id: "MED016",
     name: "أوميبرازول",
-    price: 15.0,
     category: "مضادات حموضة",
-    stock: 85,
+    variants: [
+      {
+        id: "MED016-V1",
+        price: 15.0,
+        stock: 85,
+        expiryDate: "05/26",
+        batchNumber: "B021",
+      },
+      {
+        id: "MED016-V2",
+        price: 18.0,
+        stock: 40,
+        expiryDate: "12/26",
+        batchNumber: "B022",
+      },
+    ],
   },
   {
     id: "MED017",
     name: "بانتوبرازول",
-    price: 25.0,
     category: "مضادات حموضة",
-    stock: 92,
+    variants: [
+      {
+        id: "MED017-V1",
+        price: 25.0,
+        stock: 92,
+        expiryDate: "06/26",
+        batchNumber: "B023",
+      },
+    ],
   },
   {
     id: "MED018",
     name: "رانيتيدين",
-    price: 45.0,
     category: "مضادات حموضة",
-    stock: 150,
+    variants: [
+      {
+        id: "MED018-V1",
+        price: 45.0,
+        stock: 150,
+        expiryDate: "07/26",
+        batchNumber: "B024",
+      },
+    ],
   },
   {
     id: "MED019",
     name: "لانزوبرازول",
-    price: 18.0,
     category: "مضادات حموضة",
-    stock: 75,
+    variants: [
+      {
+        id: "MED019-V1",
+        price: 18.0,
+        stock: 75,
+        expiryDate: "08/26",
+        batchNumber: "B025",
+      },
+    ],
   },
   {
     id: "MED020",
     name: "سيتامول",
-    price: 12.0,
     category: "مزيلات احتقان",
-    stock: 200,
+    variants: [
+      {
+        id: "MED020-V1",
+        price: 12.0,
+        stock: 200,
+        expiryDate: "09/26",
+        batchNumber: "B026",
+      },
+    ],
   },
   {
     id: "MED021",
     name: "أكتيفيد",
-    price: 8.0,
     category: "مضادات هيستامين",
-    stock: 60,
+    variants: [
+      {
+        id: "MED021-V1",
+        price: 8.0,
+        stock: 60,
+        expiryDate: "10/26",
+        batchNumber: "B027",
+      },
+    ],
   },
   {
     id: "MED022",
     name: "زيرتيك",
-    price: 25.0,
     category: "مضادات هيستامين",
-    stock: 45,
+    variants: [
+      {
+        id: "MED022-V1",
+        price: 25.0,
+        stock: 45,
+        expiryDate: "11/26",
+        batchNumber: "B028",
+      },
+      {
+        id: "MED022-V2",
+        price: 28.0,
+        stock: 30,
+        expiryDate: "03/27",
+        batchNumber: "B029",
+      },
+    ],
   },
   {
     id: "MED023",
     name: "أليرجيك",
-    price: 2.0,
     category: "مضادات هيستامين",
-    stock: 30,
+    variants: [
+      {
+        id: "MED023-V1",
+        price: 2.0,
+        stock: 30,
+        expiryDate: "12/26",
+        batchNumber: "B030",
+      },
+    ],
   },
   {
     id: "MED024",
     name: "لوزارتان",
-    price: 50.0,
     category: "ضغط دم",
-    stock: 40,
+    variants: [
+      {
+        id: "MED024-V1",
+        price: 50.0,
+        stock: 40,
+        expiryDate: "01/27",
+        batchNumber: "B031",
+      },
+    ],
   },
   {
     id: "MED025",
     name: "أموديبيين",
-    price: 5.0,
     category: "ضغط دم",
-    stock: 35,
+    variants: [
+      {
+        id: "MED025-V1",
+        price: 5.0,
+        stock: 35,
+        expiryDate: "02/27",
+        batchNumber: "B032",
+      },
+    ],
   },
   {
     id: "MED026",
     name: "إنالابريل",
-    price: 10.0,
     category: "ضغط دم",
-    stock: 25,
+    variants: [
+      {
+        id: "MED026-V1",
+        price: 10.0,
+        stock: 25,
+        expiryDate: "03/27",
+        batchNumber: "B033",
+      },
+    ],
   },
   {
     id: "MED027",
     name: "أتينولول",
-    price: 50.0,
     category: "ضغط دم",
-    stock: 20,
+    variants: [
+      {
+        id: "MED027-V1",
+        price: 50.0,
+        stock: 20,
+        expiryDate: "04/27",
+        batchNumber: "B034",
+      },
+    ],
   },
   {
     id: "MED028",
     name: "بروبرانولول",
-    price: 40.0,
     category: "ضغط دم",
-    stock: 15,
+    variants: [
+      {
+        id: "MED028-V1",
+        price: 40.0,
+        stock: 15,
+        expiryDate: "05/27",
+        batchNumber: "B035",
+      },
+    ],
   },
   {
     id: "MED029",
     name: "كابتوبريل",
-    price: 8.0,
     category: "سكري",
-    stock: 180,
+    variants: [
+      {
+        id: "MED029-V1",
+        price: 8.0,
+        stock: 180,
+        expiryDate: "06/27",
+        batchNumber: "B036",
+      },
+    ],
   },
   {
     id: "MED030",
     name: "إنسولين",
-    price: 15.0,
     category: "سكري",
-    stock: 220,
+    variants: [
+      {
+        id: "MED030-V1",
+        price: 15.0,
+        stock: 220,
+        expiryDate: "07/27",
+        batchNumber: "B037",
+      },
+      {
+        id: "MED030-V2",
+        price: 18.0,
+        stock: 150,
+        expiryDate: "01/28",
+        batchNumber: "B038",
+      },
+    ],
   },
   {
     id: "MED031",
     name: "جليكلازيد",
-    price: 80.0,
     category: "سكري",
-    stock: 45,
+    variants: [
+      {
+        id: "MED031-V1",
+        price: 80.0,
+        stock: 45,
+        expiryDate: "08/27",
+        batchNumber: "B039",
+      },
+    ],
   },
   {
     id: "MED032",
     name: "لانتوس",
-    price: 25.0,
     category: "سكري",
-    stock: 90,
+    variants: [
+      {
+        id: "MED032-V1",
+        price: 25.0,
+        stock: 90,
+        expiryDate: "09/27",
+        batchNumber: "B040",
+      },
+    ],
   },
   {
     id: "MED033",
     name: "همالوج",
-    price: 12.0,
     category: "سكري",
-    stock: 160,
+    variants: [
+      {
+        id: "MED033-V1",
+        price: 12.0,
+        stock: 160,
+        expiryDate: "10/27",
+        batchNumber: "B041",
+      },
+    ],
   },
   {
     id: "MED034",
     name: "نوفورابيد",
-    price: 35.0,
     category: "سكري",
-    stock: 70,
+    variants: [
+      {
+        id: "MED034-V1",
+        price: 35.0,
+        stock: 70,
+        expiryDate: "11/27",
+        batchNumber: "B042",
+      },
+    ],
   },
   {
     id: "MED035",
     name: "أسبارت",
-    price: 20.0,
     category: "سكري",
-    stock: 100,
+    variants: [
+      {
+        id: "MED035-V1",
+        price: 20.0,
+        stock: 100,
+        expiryDate: "12/27",
+        batchNumber: "B043",
+      },
+    ],
   },
   {
     id: "MED036",
     name: "تراميكون",
-    price: 45.0,
     category: "سكري",
-    stock: 55,
+    variants: [
+      {
+        id: "MED036-V1",
+        price: 45.0,
+        stock: 55,
+        expiryDate: "01/28",
+        batchNumber: "B044",
+      },
+    ],
   },
   {
     id: "MED037",
     name: "ليفيمير",
-    price: 30.0,
     category: "سكري",
-    stock: 80,
+    variants: [
+      {
+        id: "MED037-V1",
+        price: 30.0,
+        stock: 80,
+        expiryDate: "02/28",
+        batchNumber: "B045",
+      },
+    ],
   },
   {
     id: "MED038",
     name: "جلاربيكليد",
-    price: 55.0,
     category: "سكري",
-    stock: 40,
+    variants: [
+      {
+        id: "MED038-V1",
+        price: 55.0,
+        stock: 40,
+        expiryDate: "03/28",
+        batchNumber: "B046",
+      },
+    ],
   },
   {
     id: "MED039",
     name: "توفيل",
-    price: 8.0,
     category: "سكري",
-    stock: 120,
+    variants: [
+      {
+        id: "MED039-V1",
+        price: 8.0,
+        stock: 120,
+        expiryDate: "04/28",
+        batchNumber: "B047",
+      },
+    ],
   },
   {
     id: "MED040",
     name: "لانتوس إكسترا",
-    price: 15.0,
     category: "سكري",
-    stock: 85,
+    variants: [
+      {
+        id: "MED040-V1",
+        price: 15.0,
+        stock: 85,
+        expiryDate: "05/28",
+        batchNumber: "B048",
+      },
+    ],
   },
 ];

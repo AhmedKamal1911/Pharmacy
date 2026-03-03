@@ -14,7 +14,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Check, ChevronDown } from "lucide-react";
 import { useState } from "react";
-import { mockMedicines } from "../api/mock-data";
+import { medicines } from "@/data/medicines";
+import type { Medicine, MedicineVariant } from "@/data/medicines";
 
 interface MedicineSelectorProps {
   value?: string;
@@ -22,9 +23,12 @@ interface MedicineSelectorProps {
     medicineId: string,
     medicineName: string,
     medicineCode?: string,
+    variantId?: string,
+    variant?: MedicineVariant,
   ) => void;
   placeholder?: string;
   className?: string;
+  showVariants?: boolean;
 }
 
 export function MedicineSelector({
@@ -32,10 +36,11 @@ export function MedicineSelector({
   onValueChange,
   placeholder = "اختر الصنف",
   className,
+  showVariants = false,
 }: MedicineSelectorProps) {
   const [open, setOpen] = useState(false);
 
-  const selectedMedicine = mockMedicines.find((m) => m.id === value);
+  const selectedMedicine = medicines.find((m: Medicine) => m.id === value);
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
@@ -53,7 +58,7 @@ export function MedicineSelector({
         <Command className="max-h-60">
           <CommandInput placeholder="ابحث عن صنف..." />
           <CommandGroup className="max-h-40 overflow-y-auto">
-            {mockMedicines.map((medicine) => (
+            {medicines.map((medicine: Medicine) => (
               <CommandItem
                 key={medicine.id}
                 onSelect={() => {
@@ -68,7 +73,14 @@ export function MedicineSelector({
                     value === medicine.id ? "opacity-100" : "opacity-0",
                   )}
                 />
-                {medicine.name}
+                <div className="flex-1">
+                  <div className="font-medium">{medicine.name}</div>
+                  {showVariants && medicine.variants.length > 0 && (
+                    <div className="text-xs text-muted-foreground mt-1">
+                      {medicine.variants.length} متغيرات متاحة
+                    </div>
+                  )}
+                </div>
               </CommandItem>
             ))}
           </CommandGroup>

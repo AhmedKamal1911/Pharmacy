@@ -1,4 +1,4 @@
-import type { Purchase, PurchaseInvoice } from "../types";
+import type { Purchase, PurchaseInvoice, PurchaseReturn } from "../types";
 
 export const purchasesMock: Purchase[] = [
   {
@@ -50,6 +50,16 @@ export const purchasesMock: Purchase[] = [
     supplierName: "مستودع الأدوية المركزي",
     total: 4200,
     status: "RETURNED",
+  },
+  {
+    id: "7",
+    serialNumber: 7,
+    invoiceNumber: "INV-007",
+    invoiceDate: "2026-02-12",
+    supplierId: "1",
+    supplierName: "مؤسسة الأدوية المتحدة",
+    total: 2800,
+    status: "PARTIALLY_RETURNED",
   },
   {
     id: "6",
@@ -336,6 +346,57 @@ export const mockPurchaseInvoices: PurchaseInvoice[] = [
       extraDiscount: 100,
     },
   },
+  {
+    id: "7",
+    invoiceNumber: "INV-007",
+    invoiceDate: "2026-02-12",
+    supplierId: "1",
+    supplierName: "مؤسسة الأدوية المتحدة",
+    notes: "فاتورة مرتجعة جزئياً",
+    items: [
+      {
+        id: "10",
+        medicineId: "8",
+        medicineCode: "MED012",
+        medicineName: "أموكسيسيلين 250 مجم",
+        quantity: 80,
+        unitsPerPackage: 20,
+        salePrice: 18.0,
+        tax: 14,
+        mainDiscount: 5,
+        extraDiscount: 0,
+        cost: 14.5,
+        expiryDate: "2028-07-30",
+        bonus: 4,
+        expirable: true,
+      },
+      {
+        id: "11",
+        medicineId: "16",
+        medicineCode: "MED013",
+        medicineName: "بانتوبرازول 40 مجم",
+        quantity: 60,
+        unitsPerPackage: 14,
+        salePrice: 35.0,
+        tax: 14,
+        mainDiscount: 6,
+        extraDiscount: 1,
+        cost: 28.2,
+        expiryDate: "2029-02-15",
+        bonus: 0,
+        expirable: true,
+      },
+    ],
+    totals: {
+      itemsValue: 3500,
+      profitPercentage: 20.0,
+      total: 2800,
+      baseTotal: 2500,
+      taxTotal: 350,
+      extraCosts: 100,
+      extraDiscount: 50,
+    },
+  },
 ];
 
 // Function to get invoice by ID
@@ -361,6 +422,26 @@ export const returnPurchase = (id: string): boolean => {
   if (index !== -1) {
     purchasesMock[index].status = "RETURNED";
     console.log(`Purchase ${id} status updated to RETURNED`);
+    return true;
+  }
+  console.log(`Purchase with id ${id} not found`);
+  return false;
+};
+
+// Function to handle partial returns
+export const returnPurchaseItems = (
+  id: string,
+  returnData: PurchaseReturn,
+): boolean => {
+  const index = purchasesMock.findIndex((p) => p.id === id);
+  if (index !== -1) {
+    // Update status based on return type
+    purchasesMock[index].status =
+      returnData.returnType === "FULL" ? "RETURNED" : "PARTIALLY_RETURNED";
+    console.log(
+      `Purchase ${id} status updated to ${purchasesMock[index].status}`,
+    );
+    console.log(`Return data:`, returnData);
     return true;
   }
   console.log(`Purchase with id ${id} not found`);

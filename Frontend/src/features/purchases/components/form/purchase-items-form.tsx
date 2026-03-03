@@ -1,10 +1,11 @@
 import type { PurchaseItem } from "../../types";
+import type { Medicine } from "@/data/medicines";
 import { AddItemDialog } from "../dialog/add-medicine-dialog";
 import { MedicineTable } from "../table/medicine-table/medicine-table";
 
 interface PurchaseItemsFormProps {
   items: PurchaseItem[];
-  onAddItem: (newItem: PurchaseItem) => void;
+  onAddItem: (newItem: PurchaseItem, newMedicine?: Medicine) => void;
   onUpdateItem: (
     id: string,
     field: keyof PurchaseItem,

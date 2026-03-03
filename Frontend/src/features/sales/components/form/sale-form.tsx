@@ -1,7 +1,7 @@
 "use client";
 
 import { useFieldArray, useForm } from "react-hook-form";
-import { forwardRef, useImperativeHandle } from "react";
+import { forwardRef, useImperativeHandle, useEffect, useState } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Plus, Calculator } from "lucide-react";
@@ -9,10 +9,10 @@ import { Plus, Calculator } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
-import { useEffect, useState } from "react";
-import { type Medicine } from "@/data/medicines";
+import { type Medicine, type MedicineVariant } from "@/data/medicines";
 import SalesTable from "../table/sales-table";
 import { QuickMedicineSearch } from "../ui/quick-medicine-search";
+import { ExpiryMedicineSearch } from "../ui/expiry-medicine-search";
 
 // 1. تحديد شكل البيانات (Validation Schema)
 const saleFormSchema = z.object({
@@ -76,19 +76,30 @@ const SaleForm = forwardRef<
   // Watch items array for changes
   const items = form.watch("items");
 
-  // Notify parent when items change
+  // ==========================================
+  // التعديل السحري لحل مشكلة Maximum update depth
+  // ==========================================
+  const hasItems = items.some(
+    (item) => item.medicineId && item.medicineId.trim() !== "",
+  );
+
   useEffect(() => {
-    const hasItems = items.some(
-      (item) => item.medicineId && item.medicineId.trim() !== "",
-    );
     onItemsChange?.(hasItems);
-  }, [items, onItemsChange]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [hasItems]);
+  // ==========================================
 
   // Handle quick medicine selection
-  const handleQuickMedicineSelect = (medicine: Medicine) => {
+  const handleQuickMedicineSelect = (
+    medicine: Medicine,
+    variant?: MedicineVariant,
+  ) => {
+    // If no variant specified, use the first one
+    const selectedVariant = variant || medicine.variants[0];
+
     // Check if medicine already exists in the form
     const existingItemIndex = items.findIndex(
-      (item) => item.medicineId === medicine.id,
+      (item) => item.medicineId === selectedVariant.id,
     );
 
     if (existingItemIndex !== -1) {
@@ -98,13 +109,13 @@ const SaleForm = forwardRef<
     } else {
       // Medicine doesn't exist, add new item
       append({
-        medicineId: medicine.id,
+        medicineId: selectedVariant.id,
         medicineName: medicine.name,
         quantity: 1,
         unitType: "piece",
-        price: medicine.price,
+        price: selectedVariant.price,
         discount: 0,
-        expiryDate: medicine.expiryDate || "",
+        expiryDate: selectedVariant.expiryDate || "",
         vat: 0,
       });
     }
@@ -112,10 +123,13 @@ const SaleForm = forwardRef<
 
   // Expose addMedicine method to parent
   useImperativeHandle(ref, () => ({
-    addMedicine: (medicine: Medicine) => {
+    addMedicine: (medicine: Medicine, variant?: MedicineVariant) => {
+      // If no variant specified, use the first one
+      const selectedVariant = variant || medicine.variants[0];
+
       // Check if medicine already exists in the form
       const existingItemIndex = items.findIndex(
-        (item) => item.medicineId === medicine.id,
+        (item) => item.medicineId === selectedVariant.id,
       );
 
       if (existingItemIndex !== -1) {
@@ -128,13 +142,13 @@ const SaleForm = forwardRef<
       } else {
         // Medicine doesn't exist, add new item
         append({
-          medicineId: medicine.id,
+          medicineId: selectedVariant.id,
           medicineName: medicine.name,
           quantity: 1,
           unitType: "piece",
-          price: medicine.price,
+          price: selectedVariant.price,
           discount: 0,
-          expiryDate: medicine.expiryDate || "",
+          expiryDate: selectedVariant.expiryDate || "",
           vat: 0,
         });
       }
@@ -223,7 +237,7 @@ const SaleForm = forwardRef<
         </div>
 
         {/* Table Section */}
-        <div className="flex-1  overflow-hidden">
+        <div className="flex-1 overflow-hidden">
           <div className="h-full overflow-y-auto">
             <div className="p-6">
               <SalesTable fields={fields} form={form} remove={remove} />
@@ -252,6 +266,10 @@ const SaleForm = forwardRef<
                 </Button>
 
                 <QuickMedicineSearch
+                  onMedicineSelect={handleQuickMedicineSelect}
+                />
+
+                <ExpiryMedicineSearch
                   onMedicineSelect={handleQuickMedicineSelect}
                 />
               </div>

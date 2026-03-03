@@ -5,7 +5,9 @@ import {
   deletePurchase,
   cancelPurchase,
   returnPurchase,
+  returnPurchaseItems,
 } from "../api/mock-data";
+import type { PurchaseReturn } from "../types";
 
 export function usePurchases(supplierIdParam?: string) {
   const [searchParams] = useSearchParams();
@@ -51,6 +53,18 @@ export function usePurchases(supplierIdParam?: string) {
     return success;
   };
 
+  const handleReturnPurchaseItems = (
+    id: string,
+    returnData: PurchaseReturn,
+  ) => {
+    const success = returnPurchaseItems(id, returnData);
+    if (success) {
+      // Force re-render to update the list
+      forceUpdate({});
+    }
+    return success;
+  };
+
   return {
     purchases,
     isLoading: false,
@@ -59,5 +73,6 @@ export function usePurchases(supplierIdParam?: string) {
     deletePurchase: handleDeletePurchase,
     cancelPurchase: handleCancelPurchase,
     returnPurchase: handleReturnPurchase,
+    returnPurchaseItems: handleReturnPurchaseItems,
   };
 }

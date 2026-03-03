@@ -20,7 +20,11 @@ export function PurchaseStatusBadge({ status }: PurchaseStatusBadgeProps) {
       variant: "secondary" as const,
     },
     RETURNED: {
-      label: "مرتجع",
+      label: "مرتجع كامل",
+      variant: "outline" as const,
+    },
+    PARTIALLY_RETURNED: {
+      label: "مرتجع جزئي",
       variant: "outline" as const,
     },
   };

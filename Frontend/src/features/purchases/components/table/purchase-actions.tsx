@@ -41,17 +41,19 @@ export function PurchaseActions({
           <Eye className="ml-2 h-4 w-4" />
           عرض
         </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => onEdit?.(purchase)}>
-          <Edit className="ml-2 h-4 w-4" />
-          تعديل
-        </DropdownMenuItem>
-        {purchase.status !== "RETURNED" && (
+        {purchase.status !== "CANCELLED" && purchase.status !== "RETURNED" && (
+          <DropdownMenuItem onClick={() => onEdit?.(purchase)}>
+            <Edit className="ml-2 h-4 w-4" />
+            تعديل
+          </DropdownMenuItem>
+        )}
+        {purchase.status !== "CANCELLED" && purchase.status !== "RETURNED" && (
           <DropdownMenuItem onClick={() => onReturn?.(purchase)}>
             <RotateCcw className="ml-2 h-4 w-4" />
             مرتجع
           </DropdownMenuItem>
         )}
-        {purchase.status !== "CANCELLED" && (
+        {purchase.status !== "CANCELLED" && purchase.status !== "RETURNED" && (
           <>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -59,7 +61,7 @@ export function PurchaseActions({
               className="text-red-600"
             >
               <Trash2 className="ml-2 h-4 w-4" />
-              حذف
+              إلغاء
             </DropdownMenuItem>
           </>
         )}

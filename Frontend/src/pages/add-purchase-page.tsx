@@ -10,7 +10,9 @@ import type {
   PurchaseItem,
   InvoiceTotals,
 } from "@/features/purchases/types";
+import type { Medicine } from "@/data/medicines";
 import { AddInvoiceForm } from "@/features/purchases/components/form/purchase-invoice-form";
+import { medicines } from "@/data/medicines";
 
 export default function AddPurchasePage() {
   const navigate = useNavigate();
@@ -23,6 +25,7 @@ export default function AddPurchasePage() {
 
   // Items State
   const [items, setItems] = useState<PurchaseItem[]>([]);
+  const [medicinesList, setMedicinesList] = useState(medicines);
 
   // Calculate Totals
   const calculateTotals = (): InvoiceTotals => {
@@ -57,8 +60,14 @@ export default function AddPurchasePage() {
   const totals = calculateTotals();
 
   // Add New Item
-  const addItem = (newItem: PurchaseItem) => {
+  const addItem = (newItem: PurchaseItem, newMedicine?: Medicine) => {
     setItems([...items, newItem]);
+
+    // If it's a new medicine, add it to the medicines list
+    if (newMedicine && newItem.isNewMedicine) {
+      setMedicinesList([...medicinesList, newMedicine]);
+      console.log("New medicine added:", newMedicine);
+    }
   };
 
   // Update Item
