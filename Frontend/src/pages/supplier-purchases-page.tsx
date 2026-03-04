@@ -94,7 +94,7 @@ export default function SupplierPurchasesPage() {
         purchase={purchaseToDelete}
         open={deleteDialogOpen}
         onOpenChange={setDeleteDialogOpen}
-        onPurchaseDeleted={handlePurchaseDeleted}
+        onPurchaseCancelled={handlePurchaseDeleted}
       />
     </div>
   );

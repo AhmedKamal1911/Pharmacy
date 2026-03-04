@@ -63,17 +63,19 @@ export const stockColumns: ColumnDef<StockItem>[] = [
     ),
     cell: ({ row }) => {
       const stock = row.getValue("currentStock") as number;
+      const safeStock =
+        isNaN(stock) || stock === null || stock === undefined ? 0 : stock;
       const stockColor =
-        stock < 20
+        safeStock < 20
           ? "text-red-600"
-          : stock < 50
+          : safeStock < 50
             ? "text-orange-600"
-            : stock < 100
+            : safeStock < 100
               ? "text-yellow-600"
               : "text-green-600";
       return (
         <div className="text-center">
-          <div className={`font-bold text-lg ${stockColor}`}>{stock}</div>
+          <div className={`font-bold text-lg ${stockColor}`}>{safeStock}</div>
           <div className="text-sm text-muted-foreground">وحدة</div>
         </div>
       );
@@ -104,39 +106,49 @@ export const stockColumns: ColumnDef<StockItem>[] = [
     header: () => (
       <div className="text-center font-semibold">القيمة الإجمالية</div>
     ),
-    cell: ({ row }) => (
-      <div className="text-center">
-        <div className="font-bold text-green-700">
-          EGP {Number(row.getValue("totalValue")).toLocaleString()}
+    cell: ({ row }) => {
+      const value = row.getValue("totalValue") as number;
+      const safeValue =
+        isNaN(value) || value === null || value === undefined ? 0 : value;
+      return (
+        <div className="text-center">
+          <div className="font-bold text-green-700">
+            EGP {Number(safeValue).toLocaleString()}
+          </div>
         </div>
-      </div>
-    ),
+      );
+    },
   },
   {
     accessorKey: "averageMonthlySales",
     header: () => (
       <div className="text-center font-semibold">المبيعات الشهرية</div>
     ),
-    cell: ({ row }) => (
-      <div className="text-center">
-        <div className="font-semibold">
-          {row.getValue("averageMonthlySales")}
+    cell: ({ row }) => {
+      const sales = row.getValue("averageMonthlySales") as number;
+      const safeSales =
+        isNaN(sales) || sales === null || sales === undefined ? 0 : sales;
+      return (
+        <div className="text-center">
+          <div className="font-semibold">{safeSales}</div>
+          <div className="text-sm text-muted-foreground">وحدة/شهر</div>
         </div>
-        <div className="text-sm text-muted-foreground">وحدة/شهر</div>
-      </div>
-    ),
+      );
+    },
   },
   {
     accessorKey: "daysOfSupply",
     header: () => <div className="text-center font-semibold">أيام التوريد</div>,
     cell: ({ row }) => {
       const days = row.getValue("daysOfSupply") as number;
+      const safeDays =
+        isNaN(days) || days === null || days === undefined ? 0 : days;
       const variant =
-        days < 15 ? "destructive" : days < 30 ? "secondary" : "outline";
+        safeDays < 15 ? "destructive" : safeDays < 30 ? "secondary" : "outline";
       return (
         <div className="flex justify-center">
           <Badge variant={variant} className="px-3 py-1 shadow-sm font-medium">
-            {days} يوم
+            {safeDays} يوم
           </Badge>
         </div>
       );
@@ -147,9 +159,11 @@ export const stockColumns: ColumnDef<StockItem>[] = [
     header: () => <div className="text-center font-semibold">معدل الدوران</div>,
     cell: ({ row }) => {
       const rate = row.getValue("turnoverRate") as number;
+      const safeRate =
+        isNaN(rate) || rate === null || rate === undefined ? 0 : rate;
       return (
         <div className="text-center">
-          <div className="font-bold text-blue-700">{rate.toFixed(1)}</div>
+          <div className="font-bold text-blue-700">{safeRate.toFixed(1)}</div>
           <div className="text-sm text-muted-foreground">مرة/شهر</div>
         </div>
       );

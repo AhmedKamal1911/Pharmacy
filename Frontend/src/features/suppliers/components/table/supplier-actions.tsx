@@ -1,5 +1,12 @@
 import { useState } from "react";
-import { MoreHorizontal, Eye, Edit, Trash2, ShoppingCart } from "lucide-react";
+import {
+  MoreHorizontal,
+  Eye,
+  Edit,
+  Trash2,
+  ShoppingCart,
+  Receipt,
+} from "lucide-react";
 import { useNavigate } from "react-router";
 
 import { Button } from "@/components/ui/button";
@@ -58,6 +65,12 @@ export function SupplierActions({
           >
             <ShoppingCart className="ml-2 h-4 w-4" />
             عرض المشتريات
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            onClick={() => navigate(`/suppliers/${supplier.id}/transactions`)}
+          >
+            <Receipt className="ml-2 h-4 w-4" />
+            معاملات المورد
           </DropdownMenuItem>
           <DropdownMenuItem
             onClick={() => setDeleteDialogOpen(true)}

@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useSearchParams } from "react-router";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -57,16 +58,27 @@ const generateInvoiceData = () => {
     "عمر خالد",
   ];
   const paymentMethods = ["نقدي", "بطاقة ائتمان", "تحويل بنكي"];
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+  const twoDaysAgo = new Date(today);
+  twoDaysAgo.setDate(twoDaysAgo.getDate() - 2);
 
   return Array.from({ length: 15 }, (_, index) => {
     const total = Math.floor(Math.random() * 2000) + 100;
     const paid = Math.floor(Math.random() * total);
     const remaining = total - paid;
 
+    // Randomly assign dates (some today, some yesterday, some two days ago)
+    const dateOptions = [today, yesterday, twoDaysAgo];
+    const invoiceDate =
+      dateOptions[Math.floor(Math.random() * dateOptions.length)];
+
     return {
       id: `INV-${String(index + 1).padStart(4, "0")}`,
       customerName: customers[Math.floor(Math.random() * customers.length)],
-      date: new Date().toLocaleDateString("ar-EG"),
+      date: invoiceDate.toLocaleDateString("ar-EG"),
+      fullDate: invoiceDate, // Store full date for filtering
       time: `${Math.floor(Math.random() * 12) + 8}:${String(Math.floor(Math.random() * 60)).padStart(2, "0")}`,
       total,
       paid,
@@ -86,7 +98,9 @@ const generateInvoiceData = () => {
   });
 };
 
-type Invoice = ReturnType<typeof generateInvoiceData>[0];
+type Invoice = ReturnType<typeof generateInvoiceData>[0] & {
+  fullDate: Date;
+};
 
 type InvoiceSummary = {
   totalInvoices: number;
@@ -97,14 +111,20 @@ type InvoiceSummary = {
 
 type InvoiceItem = {
   id: string;
+  medicineCode: string;
   medicineName: string;
   quantity: number;
+  unit: string;
   unitPrice: number;
   totalPrice: number;
   discount: number;
+  discountPercentage: number;
+  expiryDate: string;
+  batchNumber: string;
 };
 
 export default function InvoicesPage() {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [data] = useState<Invoice[]>(generateInvoiceData());
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [selectedStatus, setSelectedStatus] = useState<string>("all");
@@ -114,6 +134,9 @@ export default function InvoicesPage() {
   const [selectedInvoice, setSelectedInvoice] = useState<Invoice | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [sortBy, setSortBy] = useState<string>("date");
+
+  // Check if we should show only today's invoices
+  const showTodayOnly = searchParams.get("today") === "true";
 
   const columns: ColumnDef<Invoice>[] = [
     {
@@ -256,6 +279,16 @@ export default function InvoicesPage() {
 
   const filteredData = useMemo(() => {
     const filtered = data.filter((invoice) => {
+      // Check if today filter is active
+      if (showTodayOnly) {
+        const today = new Date();
+        const invoiceDate = new Date(invoice.fullDate);
+        // Check if invoice is from today (same day, month, year)
+        if (invoiceDate.toDateString() !== today.toDateString()) {
+          return false;
+        }
+      }
+
       const statusMatch =
         selectedStatus === "all" || invoice.status === selectedStatus;
       const paymentMethodMatch =
@@ -285,7 +318,14 @@ export default function InvoicesPage() {
     });
 
     return sorted;
-  }, [data, selectedStatus, selectedPaymentMethod, searchQuery, sortBy]);
+  }, [
+    data,
+    selectedStatus,
+    selectedPaymentMethod,
+    searchQuery,
+    sortBy,
+    showTodayOnly,
+  ]);
 
   const summary: InvoiceSummary = useMemo(
     () => ({
@@ -562,8 +602,30 @@ export default function InvoicesPage() {
     <div className="min-h-screen">
       <div className="flex flex-col gap-10">
         <PageHeader
-          title="فواتير اليوم"
-          description="عرض جميع الفواتير الصادرة اليوم مع إمكانية عرض التفاصيل"
+          title={showTodayOnly ? "فواتير اليوم" : "جميع الفواتير"}
+          description={
+            showTodayOnly
+              ? "عرض جميع الفواتير الصادرة اليوم مع إمكانية عرض التفاصيل"
+              : "عرض جميع الفواتير مع إمكانية عرض التفاصيل"
+          }
+          actions={
+            <Button
+              onClick={() => {
+                if (showTodayOnly) {
+                  searchParams.delete("today");
+                  setSearchParams(searchParams);
+                } else {
+                  searchParams.set("today", "true");
+                  setSearchParams(searchParams);
+                }
+              }}
+              variant={showTodayOnly ? "default" : "outline"}
+              className="flex items-center gap-2"
+            >
+              <FileText className="h-4 w-4" />
+              {showTodayOnly ? "جميع الفواتير" : "فواتير اليوم"}
+            </Button>
+          }
         />
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
@@ -667,231 +729,562 @@ interface InvoiceDetailsDialogProps {
   onClose: () => void;
 }
 
-function InvoiceDetailsDialog({
+// Realistic mock invoice items - more items for testing scroll
+const mockItems: InvoiceItem[] = [
+  {
+    id: "ITEM-1",
+    medicineCode: "MED001",
+    medicineName: "بنسيلين 500 مجم",
+    quantity: 2,
+    unit: "كبسولة",
+    unitPrice: 45.5,
+    totalPrice: 91.0,
+    discount: 5.0,
+    discountPercentage: 10,
+    expiryDate: "12/2025",
+    batchNumber: "B2024001",
+  },
+  {
+    id: "ITEM-2",
+    medicineCode: "MED002",
+    medicineName: "باراسيتامول 500 مجم",
+    quantity: 1,
+    unit: "شريط",
+    unitPrice: 25.0,
+    totalPrice: 25.0,
+    discount: 0.0,
+    discountPercentage: 0,
+    expiryDate: "08/2025",
+    batchNumber: "B2024002",
+  },
+  {
+    id: "ITEM-3",
+    medicineCode: "MED003",
+    medicineName: "أموكسيسيلين 250 مجم",
+    quantity: 1,
+    unit: "زجاجة",
+    unitPrice: 35.75,
+    totalPrice: 35.75,
+    discount: 2.0,
+    discountPercentage: 5,
+    expiryDate: "10/2025",
+    batchNumber: "B2024003",
+  },
+  {
+    id: "ITEM-4",
+    medicineCode: "MED004",
+    medicineName: "فيتامين د 1000 وحدة",
+    quantity: 3,
+    unit: "علبة",
+    unitPrice: 120.0,
+    totalPrice: 360.0,
+    discount: 18.0,
+    discountPercentage: 15,
+    expiryDate: "06/2026",
+    batchNumber: "B2024004",
+  },
+  {
+    id: "ITEM-5",
+    medicineCode: "MED005",
+    medicineName: "كورتيزون كريم 1%",
+    quantity: 1,
+    unit: "أنبوبة",
+    unitPrice: 28.9,
+    totalPrice: 28.9,
+    discount: 0.0,
+    discountPercentage: 0,
+    expiryDate: "03/2025",
+    batchNumber: "B2024005",
+  },
+  {
+    id: "ITEM-6",
+    medicineCode: "MED006",
+    medicineName: "أسبرين 100 مجم",
+    quantity: 2,
+    unit: "علبة",
+    unitPrice: 15.5,
+    totalPrice: 31.0,
+    discount: 3.0,
+    discountPercentage: 10,
+    expiryDate: "09/2025",
+    batchNumber: "B2024006",
+  },
+  {
+    id: "ITEM-7",
+    medicineCode: "MED007",
+    medicineName: "فيتامين سي 500 مجم",
+    quantity: 1,
+    unit: "عبوة",
+    unitPrice: 45.0,
+    totalPrice: 45.0,
+    discount: 0.0,
+    discountPercentage: 0,
+    expiryDate: "11/2025",
+    batchNumber: "B2024007",
+  },
+  {
+    id: "ITEM-8",
+    medicineCode: "MED008",
+    medicineName: "مضاد حيوي واسع المجال",
+    quantity: 1,
+    unit: "زجاجة",
+    unitPrice: 85.0,
+    totalPrice: 85.0,
+    discount: 8.5,
+    discountPercentage: 10,
+    expiryDate: "07/2025",
+    batchNumber: "B2024008",
+  },
+  {
+    id: "ITEM-9",
+    medicineCode: "MED009",
+    medicineName: "قطرة للعين",
+    quantity: 2,
+    unit: "قطرة",
+    unitPrice: 22.5,
+    totalPrice: 45.0,
+    discount: 0.0,
+    discountPercentage: 0,
+    expiryDate: "04/2025",
+    batchNumber: "B2024009",
+  },
+  {
+    id: "ITEM-10",
+    medicineCode: "MED010",
+    medicineName: "مرهم جلدي",
+    quantity: 1,
+    unit: "أنبوبة",
+    unitPrice: 35.0,
+    totalPrice: 35.0,
+    discount: 3.5,
+    discountPercentage: 10,
+    expiryDate: "12/2025",
+    batchNumber: "B2024010",
+  },
+  {
+    id: "ITEM-11",
+    medicineCode: "MED011",
+    medicineName: "أقراص الحديد",
+    quantity: 2,
+    unit: "عبوة",
+    unitPrice: 55.0,
+    totalPrice: 110.0,
+    discount: 5.5,
+    discountPercentage: 10,
+    expiryDate: "08/2026",
+    batchNumber: "B2024011",
+  },
+  {
+    id: "ITEM-12",
+    medicineCode: "MED012",
+    medicineName: "شراب السعال",
+    quantity: 1,
+    unit: "زجاجة",
+    unitPrice: 28.0,
+    totalPrice: 28.0,
+    discount: 0.0,
+    discountPercentage: 0,
+    expiryDate: "05/2025",
+    batchNumber: "B2024012",
+  },
+  {
+    id: "ITEM-13",
+    medicineCode: "MED013",
+    medicineName: "مضاد حيوي واسع المجال",
+    quantity: 1,
+    unit: "زجاجة",
+    unitPrice: 85.0,
+    totalPrice: 85.0,
+    discount: 8.5,
+    discountPercentage: 10,
+    expiryDate: "07/2025",
+    batchNumber: "B2024008",
+  },
+  {
+    id: "ITEM-14",
+    medicineCode: "MED014",
+    medicineName: "قطرة للعين",
+    quantity: 2,
+    unit: "قطرة",
+    unitPrice: 22.5,
+    totalPrice: 45.0,
+    discount: 0.0,
+    discountPercentage: 0,
+    expiryDate: "04/2025",
+    batchNumber: "B2024009",
+  },
+  {
+    id: "ITEM-15",
+    medicineCode: "MED015",
+    medicineName: "مرهم جلدي",
+    quantity: 1,
+    unit: "أنبوبة",
+    unitPrice: 35.0,
+    totalPrice: 35.0,
+    discount: 3.5,
+    discountPercentage: 10,
+    expiryDate: "12/2025",
+    batchNumber: "B2024010",
+  },
+  {
+    id: "ITEM-16",
+    medicineCode: "MED016",
+    medicineName: "أقراص الحديد",
+    quantity: 2,
+    unit: "عبوة",
+    unitPrice: 55.0,
+    totalPrice: 110.0,
+    discount: 5.5,
+    discountPercentage: 10,
+    expiryDate: "08/2026",
+    batchNumber: "B2024011",
+  },
+  {
+    id: "ITEM-17",
+    medicineCode: "MED017",
+    medicineName: "شراب السعال",
+    quantity: 1,
+    unit: "زجاجة",
+    unitPrice: 28.0,
+    totalPrice: 28.0,
+    discount: 0.0,
+    discountPercentage: 0,
+    expiryDate: "05/2025",
+    batchNumber: "B2024012",
+  },
+  {
+    id: "ITEM-18",
+    medicineCode: "MED018",
+    medicineName: "مضاد حيوي واسع المجال",
+    quantity: 1,
+    unit: "زجاجة",
+    unitPrice: 85.0,
+    totalPrice: 85.0,
+    discount: 8.5,
+    discountPercentage: 10,
+    expiryDate: "07/2025",
+    batchNumber: "B2024008",
+  },
+  {
+    id: "ITEM-19",
+    medicineCode: "MED019",
+    medicineName: "قطرة للعين",
+    quantity: 2,
+    unit: "قطرة",
+    unitPrice: 22.5,
+    totalPrice: 45.0,
+    discount: 0.0,
+    discountPercentage: 0,
+    expiryDate: "04/2025",
+    batchNumber: "B2024009",
+  },
+  {
+    id: "ITEM-20",
+    medicineCode: "MED020",
+    medicineName: "مرهم جلدي",
+    quantity: 1,
+    unit: "أنبوبة",
+    unitPrice: 35.0,
+    totalPrice: 35.0,
+    discount: 3.5,
+    discountPercentage: 10,
+    expiryDate: "12/2025",
+    batchNumber: "B2024010",
+  },
+];
+export function InvoiceDetailsDialog({
   invoice,
   isOpen,
   onClose,
 }: InvoiceDetailsDialogProps) {
-  if (!invoice) return null;
+  if (!invoice || !isOpen) return null;
 
-  if (!isOpen) return null;
-
-  // Static mock invoice items for demonstration
-  const mockItems: InvoiceItem[] = [
-    {
-      id: "ITEM-1",
-      medicineName: "دواء 1",
-      quantity: 5,
-      unitPrice: 120,
-      totalPrice: 600,
-      discount: 20,
-    },
-    {
-      id: "ITEM-2",
-      medicineName: "دواء 2",
-      quantity: 3,
-      unitPrice: 85,
-      totalPrice: 255,
-      discount: 15,
-    },
-    {
-      id: "ITEM-3",
-      medicineName: "دواء 3",
-      quantity: 2,
-      unitPrice: 200,
-      totalPrice: 400,
-      discount: 10,
-    },
-    {
-      id: "ITEM-4",
-      medicineName: "دواء 4",
-      quantity: 1,
-      unitPrice: 350,
-      totalPrice: 350,
-      discount: 0,
-    },
-  ];
+  // استخدام الداتا الحقيقية من الفاتورة، مع توفير مصفوفة فارغة كاحتياطي
+  const items: InvoiceItem[] = mockItems;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-hidden flex flex-col">
-        {/* Header */}
-        <div className="bg-white border-b px-6 py-4 flex items-center justify-between">
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-2"
+      onClick={onClose}
+    >
+      <div
+        className="bg-gray-50 rounded-2xl shadow-2xl w-[95vw] h-[90vh] md:w-[90vw] md:h-[85vh] lg:w-[85vw] lg:h-[85vh] max-w-7xl flex flex-col overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Header - Fixed */}
+        <div className="bg-gradient-to-r from-blue-600 to-blue-800 text-white px-4 py-2 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-3">
-            <Receipt className="h-5 w-5 text-blue-600" />
-            <h2 className="text-lg font-semibold">تفاصيل الفاتورة</h2>
-            <span className="text-sm text-gray-500">{invoice.id}</span>
+            <div className="bg-white/20 p-2 rounded-lg">
+              <Receipt className="h-6 w-6" />
+            </div>
+            <div>
+              <h2 className="text-lg font-bold">تفاصيل الفاتورة</h2>
+              <p className="text-blue-100 text-sm font-mono tracking-wider">
+                #{invoice.id}
+              </p>
+            </div>
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-gray-100 rounded">
-            <X className="h-5 w-5 text-gray-500" />
+          <button
+            onClick={onClose}
+            className="bg-white/10 hover:bg-white/20 hover:text-red-200 p-2 rounded-lg transition-colors"
+          >
+            <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* Scrollable Content */}
-        <ScrollArea className="flex-1 px-6">
-          <div className="py-6 space-y-6">
-            {/* Customer Info */}
-            <div className="bg-gray-50 rounded-lg p-4">
-              <h3 className="font-medium text-gray-900 mb-3">معلومات العميل</h3>
-              <div className="grid grid-cols-3 gap-4">
-                <div>
-                  <p className="text-sm text-gray-500">الاسم</p>
-                  <p className="font-medium">{invoice.customerName}</p>
+        {/* Scrollable Content - takes remaining height */}
+        <div className="flex-1 overflow-hidden">
+          <ScrollArea className="h-full w-full" dir="rtl">
+            <div className="p-4 space-y-4">
+              {/* Basic Info */}
+              <div className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
+                <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                  <div className="flex items-center gap-3">
+                    <div className="bg-blue-50 p-3 rounded-xl border border-blue-100">
+                      <User className="h-5 w-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 font-medium mb-1">
+                        العميل
+                      </p>
+                      <p className="font-bold text-gray-900 truncate max-w-[120px]">
+                        {invoice.customerName}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="bg-green-50 p-3 rounded-xl border border-green-100">
+                      <Receipt className="h-5 w-5 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 font-medium mb-1">
+                        التاريخ والوقت
+                      </p>
+                      <p className="font-bold text-gray-900">{invoice.date}</p>
+                      <p className="text-xs text-gray-600">{invoice.time}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="bg-purple-50 p-3 rounded-xl border border-purple-100">
+                      <User className="h-5 w-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 font-medium mb-1">
+                        محرر الفاتورة
+                      </p>
+                      <p className="font-bold text-gray-900">
+                        {invoice.salesperson}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <div className="bg-orange-50 p-3 rounded-xl border border-orange-100">
+                      <CreditCard className="h-5 w-5 text-orange-600" />
+                    </div>
+                    <div>
+                      <p className="text-xs text-gray-500 font-medium mb-1">
+                        طريقة الدفع
+                      </p>
+                      <p className="font-bold text-gray-900">
+                        {invoice.paymentMethod}
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">الهاتف</p>
-                  <p className="font-medium">+20 123 456 7890</p>
+              </div>
+
+              {/* Financial Summary */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div className="bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-xl p-4 shadow-sm relative overflow-hidden">
+                  <div className="relative z-10 flex justify-between items-center">
+                    <div>
+                      <p className="text-blue-100 text-sm mb-1">الإجمالي</p>
+                      <p className="text-3xl font-bold font-mono">
+                        {invoice.total.toLocaleString()}{" "}
+                        <span className="text-sm font-normal">ج.م</span>
+                      </p>
+                    </div>
+                    <div className="bg-white/20 p-3 rounded-full">
+                      <DollarSign className="h-6 w-6" />
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <p className="text-sm text-gray-500">البريد الإلكتروني</p>
-                  <p className="font-medium">customer@example.com</p>
+
+                <div className="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white rounded-xl p-4 shadow-sm relative overflow-hidden">
+                  <div className="relative z-10 flex justify-between items-center">
+                    <div>
+                      <p className="text-emerald-100 text-sm mb-1">المدفوع</p>
+                      <p className="text-3xl font-bold font-mono">
+                        {invoice.paid.toLocaleString()}{" "}
+                        <span className="text-sm font-normal">ج.م</span>
+                      </p>
+                    </div>
+                    <div className="bg-white/20 p-3 rounded-full">
+                      <Receipt className="h-6 w-6" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-gradient-to-br from-rose-500 to-rose-600 text-white rounded-xl p-4 shadow-sm relative overflow-hidden">
+                  <div className="relative z-10 flex justify-between items-center">
+                    <div>
+                      <p className="text-rose-100 text-sm mb-1">المتبقي</p>
+                      <p className="text-3xl font-bold font-mono">
+                        {invoice.remaining.toLocaleString()}{" "}
+                        <span className="text-sm font-normal">ج.م</span>
+                      </p>
+                    </div>
+                    <div className="bg-white/20 p-3 rounded-full">
+                      <AlertCircle className="h-6 w-6" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Status Badge */}
+              <div className="flex items-center gap-3 bg-white p-3 rounded-xl border shadow-sm">
+                <p className="text-sm font-bold text-gray-700">
+                  حالة الفاتورة:
+                </p>
+                <Badge
+                  variant={
+                    invoice.status === "مدفوعة"
+                      ? "default"
+                      : invoice.status === "جزئية"
+                        ? "secondary"
+                        : "destructive"
+                  }
+                  className="font-bold px-4 py-1 text-sm"
+                >
+                  {invoice.status}
+                </Badge>
+              </div>
+
+              {/* Items Table - Enhanced for large data */}
+              <div className="bg-white border rounded-xl shadow-sm overflow-hidden flex flex-col">
+                <div className="bg-gray-50/80 px-4 py-3 border-b flex justify-between items-center">
+                  <h3 className="font-bold text-gray-900 flex items-center gap-3">
+                    <div className="bg-blue-100 p-2 rounded-lg">
+                      <FileText className="h-5 w-5 text-blue-600" />
+                    </div>
+                    الأصناف المسجلة
+                  </h3>
+                  <Badge
+                    variant="outline"
+                    className="bg-white font-bold text-blue-700"
+                  >
+                    {items.length} أصناف
+                  </Badge>
+                </div>
+
+                {/* Table Wrapper (handles horizontal scroll on small screens) */}
+                <div className="w-full overflow-x-auto">
+                  <table className="w-full min-w-[700px] text-right">
+                    {/* Sticky Header with Backdrop Blur */}
+                    <thead className="bg-gray-100/80 backdrop-blur-md sticky top-0 z-10 border-b shadow-sm">
+                      <tr>
+                        <th className="px-4 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider">
+                          كود
+                        </th>
+                        <th className="px-4 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider">
+                          اسم الصنف
+                        </th>
+                        <th className="px-4 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider text-center">
+                          الكمية
+                        </th>
+                        <th className="px-4 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider text-center">
+                          السعر
+                        </th>
+                        <th className="px-4 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider text-center">
+                          الخصم
+                        </th>
+                        <th className="px-4 py-3 text-xs font-bold text-gray-600 uppercase tracking-wider text-left">
+                          الإجمالي
+                        </th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {items.length > 0 ? (
+                        items.map((item, index) => (
+                          <tr
+                            key={item.id || index}
+                            className="hover:bg-blue-50/50 even:bg-gray-50/50 transition-colors"
+                          >
+                            <td className="px-4 py-2 text-sm font-mono font-bold text-blue-600 whitespace-nowrap">
+                              {item.medicineCode}
+                            </td>
+                            <td className="px-4 py-2 text-sm font-semibold text-gray-900">
+                              {item.medicineName}
+                            </td>
+                            <td className="px-4 py-2 text-sm text-center whitespace-nowrap">
+                              <div className="flex items-center justify-center gap-2">
+                                <span className="font-bold text-gray-900 text-base">
+                                  {item.quantity}
+                                </span>
+                                <span className="text-gray-500 text-xs bg-gray-200/70 px-2 py-1 rounded-md">
+                                  {item.unit}
+                                </span>
+                              </div>
+                            </td>
+                            <td className="px-4 py-2 text-sm text-center font-semibold text-gray-900 whitespace-nowrap">
+                              {item.unitPrice.toFixed(2)}
+                            </td>
+                            <td className="px-4 py-2 text-sm text-center whitespace-nowrap">
+                              {item.discountPercentage > 0 ? (
+                                <div className="flex flex-col items-center gap-1">
+                                  <span className="bg-red-100 text-red-700 px-2 py-0.5 rounded text-xs font-bold">
+                                    {item.discountPercentage}%
+                                  </span>
+                                  <span className="text-red-600 font-bold text-xs">
+                                    -{item.discount.toFixed(2)}
+                                  </span>
+                                </div>
+                              ) : (
+                                <span className="text-gray-400 font-medium">
+                                  -
+                                </span>
+                              )}
+                            </td>
+                            <td className="px-4 py-2 text-sm text-left font-bold text-gray-900 whitespace-nowrap">
+                              {item.totalPrice.toFixed(2)}{" "}
+                              <span className="text-xs text-gray-500 font-normal">
+                                ج.م
+                              </span>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td
+                            colSpan={6}
+                            className="px-6 py-12 text-center text-gray-500 font-medium"
+                          >
+                            لا توجد أصناف في هذه الفاتورة
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
                 </div>
               </div>
             </div>
+          </ScrollArea>
+        </div>
 
-            {/* Invoice Details */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-sm text-gray-500 mb-1">التاريخ</p>
-                <p className="font-medium">{invoice.date}</p>
-                <p className="text-sm text-gray-600">{invoice.time}</p>
-              </div>
-              <div className="bg-gray-50 rounded-lg p-4">
-                <p className="text-sm text-gray-500 mb-1">طريقة الدفع</p>
-                <p className="font-medium">{invoice.paymentMethod}</p>
-              </div>
-            </div>
-
-            {/* Items Table */}
-            <div className="bg-white border rounded-lg">
-              <div className="px-4 py-3 border-b">
-                <h3 className="font-medium text-gray-900">العناصر</h3>
-              </div>
-              <table className="w-full">
-                <thead className="bg-gray-50 border-b">
-                  <tr>
-                    <th className="text-right px-4 py-2 text-sm font-medium text-gray-700">
-                      الدواء
-                    </th>
-                    <th className="text-center px-4 py-2 text-sm font-medium text-gray-700">
-                      الكمية
-                    </th>
-                    <th className="text-center px-4 py-2 text-sm font-medium text-gray-700">
-                      السعر
-                    </th>
-                    <th className="text-center px-4 py-2 text-sm font-medium text-gray-700">
-                      الخصم
-                    </th>
-                    <th className="text-left px-4 py-2 text-sm font-medium text-gray-700">
-                      الإجمالي
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y">
-                  {mockItems.map((item) => (
-                    <tr key={item.id} className="hover:bg-gray-50">
-                      <td className="px-4 py-2 text-sm">{item.medicineName}</td>
-                      <td className="px-4 py-2 text-sm text-center">
-                        {item.quantity}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-center">
-                        EGP {item.unitPrice}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-center text-red-600">
-                        EGP {item.discount}
-                      </td>
-                      <td className="px-4 py-2 text-sm text-left font-medium">
-                        EGP {item.totalPrice}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-
-            {/* Summary */}
-            <div className="grid grid-cols-2 gap-4">
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="font-medium text-gray-900 mb-3">
-                  ملخص الفاتورة
-                </h3>
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">الإجمالي:</span>
-                    <span>EGP {invoice.total.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">الضريبة:</span>
-                    <span>EGP {invoice.tax.toLocaleString()}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">الخصم:</span>
-                    <span className="text-red-600">
-                      EGP {invoice.discount.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between pt-2 border-t">
-                    <span className="font-medium">الصافي:</span>
-                    <span className="font-bold">
-                      EGP {invoice.netTotal.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="font-medium text-gray-900 mb-3">حالة الدفع</h3>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-gray-600">الحالة:</span>
-                    <Badge
-                      variant={
-                        invoice.status === "مدفوعة"
-                          ? "default"
-                          : invoice.status === "جزئية"
-                            ? "secondary"
-                            : "destructive"
-                      }
-                    >
-                      {invoice.status}
-                    </Badge>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">المدفوع:</span>
-                    <span className="text-green-600">
-                      EGP {invoice.paid.toLocaleString()}
-                    </span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">المتبقي:</span>
-                    <span className="text-red-600">
-                      EGP {invoice.remaining.toLocaleString()}
-                    </span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Notes */}
-            {invoice.notes && (
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h3 className="font-medium text-gray-900 mb-2">ملاحظات</h3>
-                <p className="text-sm text-gray-700">{invoice.notes}</p>
-              </div>
-            )}
-          </div>
-        </ScrollArea>
-
-        {/* Footer */}
-        <div className="bg-white border-t px-6 py-4">
-          <div className="flex gap-3">
-            <Button onClick={onClose} variant="outline" className="flex-1">
-              إغلاق
-            </Button>
-            <Button className="flex-1 bg-blue-600 hover:bg-blue-700">
-              طباعة الفاتورة
-            </Button>
-          </div>
+        {/* Footer - Fixed */}
+        <div className="border-t border-gray-200 px-4 py-2 bg-white shrink-0 flex gap-4">
+          <Button
+            variant="outline"
+            className="flex-1 h-12 font-bold border-2 hover:bg-gray-50 transition-all text-gray-700"
+            onClick={onClose}
+          >
+            <X className="h-4 w-4 ml-2" />
+            إغلاق
+          </Button>
+          <Button className="flex-1 h-12 bg-blue-600 hover:bg-blue-700 text-white font-bold shadow-md transition-all">
+            <Receipt className="h-4 w-4 ml-2" />
+            طباعة الفاتورة
+          </Button>
         </div>
       </div>
     </div>

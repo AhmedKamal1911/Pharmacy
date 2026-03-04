@@ -7,6 +7,7 @@ import PurchasesPage from "./pages/purchases-page";
 import PurchaseInvoicePage from "./pages/purchase-invoice-page";
 import AddPurchasePage from "./pages/add-purchase-page";
 import EditPurchasePage from "./pages/edit-purchase-page";
+import SupplierTransactionsPage from "./pages/supplier-transactions-page";
 import SupplierPurchasesPage from "./pages/supplier-purchases-page";
 import BestSellingPage from "@/features/sales/pages/best-selling-page";
 import LowStockPage from "@/features/sales/pages/low-stock-page";
@@ -29,7 +30,7 @@ function App() {
         {/* Changed to SalesPage as home */}
         <Route path="/inventory" element={<Inventory />} />{" "}
         {/* Matches Sidebar */}
-        <Route path="/sales" element={<SalesPage />} />{" "}
+        <Route path="/sales" element={<InvoicesPage />} />{" "}
         {/* Added sales route */}
         <Route path="/sales/best-selling" element={<BestSellingPage />} />{" "}
         <Route path="/sales/low-stock" element={<LowStockPage />} />{" "}
@@ -41,6 +42,11 @@ function App() {
         <Route
           path="/suppliers/:supplierId/purchases"
           element={<SupplierPurchasesPage />}
+        />{" "}
+        {/* مسارات المعاملات المالية */}
+        <Route
+          path="/suppliers/:supplierId/transactions"
+          element={<SupplierTransactionsPage />}
         />{" "}
         {/* مسارات المشتريات */}
         <Route path="/purchases" element={<PurchasesPage />} />{" "}

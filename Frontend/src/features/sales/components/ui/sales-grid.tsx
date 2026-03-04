@@ -149,7 +149,7 @@ export function SalesGrid({ stats }: SalesGridProps) {
 
         {/* Today Invoices - Clickable */}
         <Card
-          onClick={() => navigate("/sales/invoices")}
+          onClick={() => navigate("/sales/invoices?today=true")}
           className="group relative overflow-hidden rounded-xl border-2 border-purple-200/20 bg-gradient-to-br from-purple-50/70 to-purple-100/50 p-5 shadow-md hover:shadow-lg transition-all duration-400 hover:-translate-y-2 cursor-pointer"
         >
           <div className="absolute -inset-1 rounded-xl border-4 border-purple-400/0 group-hover:border-purple-400 transition-all duration-1000 shadow-purple-400/50" />
