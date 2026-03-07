@@ -10,6 +10,7 @@ import {
   ArrowLeftRight,
   FileText,
   Receipt,
+  Grid3x3,
 } from "lucide-react";
 
 import {
@@ -32,6 +33,7 @@ const NAV_ITEMS = [
     group: "القائمة الرئيسية",
     items: [
       { title: "الرئيسية", url: "/", icon: LayoutDashboard },
+      { title: "الفئات", url: "/categories", icon: Grid3x3 },
       { title: "المخزون", url: "/stock", icon: PackageSearch },
     ],
   },

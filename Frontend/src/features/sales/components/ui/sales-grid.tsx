@@ -57,7 +57,7 @@ export function SalesGrid({ stats }: SalesGridProps) {
 
         {/* Low Stock Items - Clickable */}
         <Card
-          onClick={() => navigate("/sales/low-stock")}
+          onClick={() => navigate("/low-stock")}
           className="group relative overflow-hidden rounded-xl border-2 border-orange-200/20 bg-gradient-to-br from-orange-50/70 to-orange-100/50 p-5 shadow-md hover:shadow-lg transition-all duration-400 hover:-translate-y-2 cursor-pointer"
         >
           <div className="absolute -inset-1 rounded-xl border-4 border-orange-400/0 group-hover:border-orange-400 transition-all duration-1000 shadow-orange-400/50" />
@@ -90,7 +90,7 @@ export function SalesGrid({ stats }: SalesGridProps) {
 
         {/* Expiring Items - Clickable */}
         <Card
-          onClick={() => navigate("/sales/expiring")}
+          onClick={() => navigate("/expiring-stock")}
           className="group relative overflow-hidden rounded-xl border-2 border-red-200/20 bg-gradient-to-br from-red-50/70 to-red-100/50 p-5 shadow-md hover:shadow-lg transition-all duration-400 hover:-translate-y-2 cursor-pointer"
         >
           <div className="absolute -inset-1 rounded-xl border-4 border-red-400/0 group-hover:border-red-400 transition-all duration-1000 shadow-red-400/50" />

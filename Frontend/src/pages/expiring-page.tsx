@@ -48,9 +48,14 @@ const generateExpiringData = () => {
   const today = new Date();
 
   return medicines
-    .filter((medicine) => medicine.expiryDate) // Only items with expiry dates
+    .filter((medicine) =>
+      medicine.variants.some((variant) => variant.expiryDate),
+    )
     .map((medicine) => {
-      const [month, year] = medicine.expiryDate!.split("/");
+      const variantWithExpiry = medicine.variants.find((v) => v.expiryDate);
+      if (!variantWithExpiry?.expiryDate) return null;
+
+      const [month, year] = variantWithExpiry.expiryDate.split("/");
       const expiryDate = new Date(parseInt(`20${year}`), parseInt(month) - 1);
       const daysUntilExpiry = Math.ceil(
         (expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
@@ -60,14 +65,21 @@ const generateExpiringData = () => {
         id: medicine.id,
         name: medicine.name,
         category: medicine.category,
-        price: medicine.price,
-        currentStock: medicine.stock,
-        expiryDate: medicine.expiryDate!,
+        price: medicine.variants[0]?.price || 0,
+        currentStock: medicine.variants.reduce(
+          (sum, variant) => sum + variant.stock,
+          0,
+        ),
+        expiryDate: variantWithExpiry.expiryDate,
         daysUntilExpiry: Math.max(0, daysUntilExpiry),
-        batchNumber: `B${Math.floor(Math.random() * 10000)}`,
+        batchNumber:
+          medicine.variants[0]?.batchNumber ||
+          `B${Math.floor(Math.random() * 10000)}`,
         manufacturer: `شركة ${Math.floor(Math.random() * 5) + 1}`,
         storageCondition: Math.random() > 0.5 ? "درجة حرارة الغرفة" : "ثلاجة",
-        totalValue: medicine.price * medicine.stock,
+        totalValue:
+          (medicine.variants[0]?.price || 0) *
+          medicine.variants.reduce((sum, variant) => sum + variant.stock, 0),
         lastInspection: new Date(
           today.getTime() - Math.random() * 30 * 24 * 60 * 60 * 1000,
         ).toLocaleDateString("ar-EG"),
@@ -85,7 +97,8 @@ const generateExpiringData = () => {
               : "مراقبة",
       };
     })
-    .filter((item) => item.daysUntilExpiry <= 90) // Only items expiring within 90 days
+    .filter((item): item is NonNullable<typeof item> => item !== null)
+    .filter((item) => item.daysUntilExpiry <= 90)
     .sort((a, b) => a.daysUntilExpiry - b.daysUntilExpiry);
 };
 

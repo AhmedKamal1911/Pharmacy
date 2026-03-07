@@ -10,11 +10,12 @@ import EditPurchasePage from "./pages/edit-purchase-page";
 import SupplierTransactionsPage from "./pages/supplier-transactions-page";
 import SupplierPurchasesPage from "./pages/supplier-purchases-page";
 import BestSellingPage from "@/features/sales/pages/best-selling-page";
-import LowStockPage from "@/features/sales/pages/low-stock-page";
-import ExpiringPage from "@/features/sales/pages/expiring-page";
+import LowStockPage from "@/pages/low-stock-page";
+import ExpiringPage from "@/pages/expiring-page";
 import StockPage from "@/pages/stock-page";
 import InvoicesPage from "@/features/sales/pages/invoices-page";
 import { ReturnsPage } from "@/pages/returns-page";
+import CategoriesPage from "@/pages/categories-page";
 
 // Placeholder components
 const About = () => <div className=" text-lg">عن نظام إدارة الصيدلية v1.0</div>;
@@ -28,13 +29,15 @@ function App() {
       <Route element={<DashboardLayout />}>
         <Route path="/" element={<SalesPage />} />{" "}
         {/* Changed to SalesPage as home */}
+        <Route path="/categories" element={<CategoriesPage />} />{" "}
+        {/* Added categories route */}
         <Route path="/inventory" element={<Inventory />} />{" "}
         {/* Matches Sidebar */}
         <Route path="/sales" element={<InvoicesPage />} />{" "}
         {/* Added sales route */}
         <Route path="/sales/best-selling" element={<BestSellingPage />} />{" "}
-        <Route path="/sales/low-stock" element={<LowStockPage />} />{" "}
-        <Route path="/sales/expiring" element={<ExpiringPage />} />{" "}
+        <Route path="/low-stock" element={<LowStockPage />} />{" "}
+        <Route path="/expiring-stock" element={<ExpiringPage />} />{" "}
         <Route path="/stock" element={<StockPage />} />{" "}
         <Route path="/sales/invoices" element={<InvoicesPage />} />{" "}
         <Route path="/customers" element={<CustomersPage />} />{" "}

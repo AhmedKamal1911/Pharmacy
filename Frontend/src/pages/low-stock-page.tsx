@@ -46,30 +46,40 @@ import {
 // Mock low stock data - in real app this would come from API
 const generateLowStockData = () => {
   return medicines
-    .filter((medicine) => medicine.stock < 100) // Items with low stock
-    .map((medicine) => ({
-      id: medicine.id,
-      name: medicine.name,
-      category: medicine.category,
-      price: medicine.price,
-      currentStock: medicine.stock,
-      minStockLevel: Math.floor(Math.random() * 50) + 20, // Random minimum stock level
-      maxStockLevel: Math.floor(Math.random() * 200) + 100, // Random maximum stock level
-      reorderPoint: Math.floor(Math.random() * 30) + 10,
-      lastReorderDate: new Date(
-        Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000,
-      ).toLocaleDateString("ar-EG"),
-      supplier: `مورد ${Math.floor(Math.random() * 5) + 1}`,
-      daysUntilStockout: Math.floor(Math.random() * 30) + 1,
-      status:
-        medicine.stock < 20
-          ? "critical"
-          : medicine.stock < 50
-            ? "low"
-            : "warning",
-      monthlyUsage: Math.floor(Math.random() * 100) + 20,
-      recommendedOrder: Math.floor(Math.random() * 100) + 50,
-    }))
+    .filter((medicine) => {
+      // Calculate total stock from all variants
+      const totalStock = medicine.variants.reduce(
+        (sum, variant) => sum + variant.stock,
+        0,
+      );
+      return totalStock < 100; // Items with low stock
+    })
+    .map((medicine) => {
+      // Calculate total stock from all variants
+      const totalStock = medicine.variants.reduce(
+        (sum, variant) => sum + variant.stock,
+        0,
+      );
+      return {
+        id: medicine.id,
+        name: medicine.name,
+        category: medicine.category,
+        price: medicine.basePrice || 0,
+        currentStock: totalStock,
+        minStockLevel: Math.floor(Math.random() * 50) + 20, // Random minimum stock level
+        maxStockLevel: Math.floor(Math.random() * 200) + 100, // Random maximum stock level
+        reorderPoint: Math.floor(Math.random() * 30) + 10,
+        lastReorderDate: new Date(
+          Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000,
+        ).toLocaleDateString("ar-EG"),
+        supplier: `مورد ${Math.floor(Math.random() * 5) + 1}`,
+        daysUntilStockout: Math.floor(Math.random() * 30) + 1,
+        status:
+          totalStock < 20 ? "critical" : totalStock < 50 ? "low" : "warning",
+        monthlyUsage: Math.floor(Math.random() * 100) + 20,
+        recommendedOrder: Math.floor(Math.random() * 100) + 50,
+      };
+    })
     .sort((a, b) => a.currentStock - b.currentStock);
 };
 
