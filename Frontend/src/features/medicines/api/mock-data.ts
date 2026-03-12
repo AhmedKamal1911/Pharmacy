@@ -1,11 +1,4 @@
-export interface Medicine {
-  id: string;
-  name: string;
-  code?: string;
-  category?: string;
-  dosageForm?: string;
-  strength?: string;
-}
+import type { Medicine } from "../types";
 
 export const mockMedicines: Medicine[] = [
   // Pain Relief & Anti-inflammatory
@@ -14,589 +7,551 @@ export const mockMedicines: Medicine[] = [
     name: "بانادول اكسترا",
     code: "MED001",
     category: "مسكنات",
-    dosageForm: "أقراص",
-    strength: "500مجم",
+    description: "مسكن للألم وخافض للحرارة",
+    basePrice: 25.5,
+    cost: 18.75,
+    unit: "علبة",
+    minStock: 10,
+    variants: [
+      {
+        id: "v1-1",
+        price: 25.5,
+        cost: 18.75,
+        stock: 50,
+        expiryDate: "2025-12-31",
+        batchNumber: "B001",
+      },
+      {
+        id: "v1-2",
+        price: 26.0,
+        cost: 19.2,
+        stock: 30,
+        expiryDate: "2026-03-15",
+        batchNumber: "B002",
+      },
+    ],
+    createdAt: "2024-01-15T10:00:00Z",
+    updatedAt: "2024-03-10T15:30:00Z",
   },
   {
     id: "2",
     name: "أدفيل",
     code: "MED002",
     category: "مسكنات",
-    dosageForm: "كبسولات",
-    strength: "400مجم",
+    description: "مسكن قوي للآلام",
+    basePrice: 28.75,
+    cost: 21.5,
+    unit: "عبوة",
+    minStock: 8,
+    variants: [
+      {
+        id: "v2-1",
+        price: 28.75,
+        cost: 21.5,
+        stock: 40,
+        expiryDate: "2025-10-20",
+        batchNumber: "A001",
+      },
+    ],
+    createdAt: "2024-01-20T09:15:00Z",
+    updatedAt: "2024-03-12T11:45:00Z",
   },
   {
     id: "3",
     name: "أسبيرين",
     code: "MED003",
     category: "مسكنات",
-    dosageForm: "أقراص",
-    strength: "100مجم",
+    description: "مضاد للالتهاب ومميع للدم",
+    basePrice: 15.25,
+    cost: 11.8,
+    unit: "علبة",
+    minStock: 15,
+    variants: [
+      {
+        id: "v3-1",
+        price: 15.25,
+        cost: 11.8,
+        stock: 80,
+        expiryDate: "2026-01-10",
+        batchNumber: "ASP001",
+      },
+      {
+        id: "v3-2",
+        price: 16.0,
+        cost: 12.4,
+        stock: 25,
+        expiryDate: "2026-06-30",
+        batchNumber: "ASP002",
+      },
+    ],
+    createdAt: "2024-02-01T14:20:00Z",
+    updatedAt: "2024-03-11T16:00:00Z",
   },
   {
     id: "4",
     name: "بروفين",
     code: "MED004",
     category: "مسكنات",
-    dosageForm: "أقراص",
-    strength: "200مجم",
+    description: "مسكن ومضاد للالتهاب",
+    basePrice: 22.0,
+    cost: 16.25,
+    unit: "علبة",
+    minStock: 12,
+    variants: [
+      {
+        id: "v4-1",
+        price: 22.0,
+        cost: 16.25,
+        stock: 35,
+        expiryDate: "2025-11-15",
+        batchNumber: "PRO001",
+      },
+    ],
+    createdAt: "2024-02-10T08:30:00Z",
+    updatedAt: "2024-03-09T12:15:00Z",
   },
   {
     id: "5",
     name: "فولتارين",
     code: "MED005",
     category: "مسكنات",
-    dosageForm: "أقراص",
-    strength: "50مجم",
+    description: "مسكن قوي لآلام المفاصل",
+    basePrice: 35.5,
+    cost: 28.9,
+    unit: "شريط",
+    minStock: 6,
+    variants: [
+      {
+        id: "v5-1",
+        price: 35.5,
+        cost: 28.9,
+        stock: 20,
+        expiryDate: "2025-09-30",
+        batchNumber: "VOL001",
+      },
+      {
+        id: "v5-2",
+        price: 36.25,
+        cost: 29.5,
+        stock: 0, // Empty batch - can be deleted
+        expiryDate: "2024-12-31", // Expired
+        batchNumber: "VOL002",
+      },
+    ],
+    createdAt: "2024-02-15T11:00:00Z",
+    updatedAt: "2024-03-13T10:30:00Z",
   },
   {
     id: "6",
-    name: "كاتافلام",
-    category: "مسكنات",
-    dosageForm: "أقراص",
-    strength: "50مجم",
+    name: "أوجمنتين",
+    code: "MED009",
+    category: "مضادات حيوية",
+    description: "مضاد حيوي واسع المدى",
+    basePrice: 45.0,
+    cost: 35.2,
+    unit: "علبة",
+    minStock: 8,
+    variants: [
+      {
+        id: "v6-1",
+        price: 45.0,
+        cost: 35.2,
+        stock: 25,
+        expiryDate: "2025-08-20",
+        batchNumber: "AUG001",
+      },
+    ],
+    createdAt: "2024-01-25T13:45:00Z",
+    updatedAt: "2024-03-14T09:20:00Z",
   },
   {
     id: "7",
-    name: "أليف",
-    category: "مسكنات",
-    dosageForm: "أقراص",
-    strength: "220مجم",
+    name: "زيثروماكس",
+    code: "MED010",
+    category: "مضادات حيوية",
+    description: "مضاد حيوي فعال",
+    basePrice: 52.75,
+    cost: 41.3,
+    unit: "عبوة",
+    minStock: 5,
+    variants: [
+      {
+        id: "v7-1",
+        price: 52.75,
+        cost: 41.3,
+        stock: 18,
+        expiryDate: "2025-12-10",
+        batchNumber: "ZTH001",
+      },
+      {
+        id: "v7-2",
+        price: 54.0,
+        cost: 42.5,
+        stock: 12,
+        expiryDate: "2026-04-15",
+        batchNumber: "ZTH002",
+      },
+    ],
+    createdAt: "2024-02-05T10:15:00Z",
+    updatedAt: "2024-03-12T14:40:00Z",
   },
   {
     id: "8",
-    name: "سيرالكس",
-    category: "مسكنات",
-    dosageForm: "أقراص",
-    strength: "100مجم",
+    name: "أموكسيسيلين",
+    code: "MED011",
+    category: "مضادات حيوية",
+    description: "مضاد حيوي شائع الاستخدام",
+    basePrice: 18.5,
+    cost: 14.2,
+    unit: "علبة",
+    minStock: 20,
+    variants: [
+      {
+        id: "v8-1",
+        price: 18.5,
+        cost: 14.2,
+        stock: 0, // Empty batch - can be deleted
+        expiryDate: "2024-06-30", // Expired
+        batchNumber: "AMX001",
+      },
+      {
+        id: "v8-2",
+        price: 19.0,
+        cost: 14.8,
+        stock: 0, // Empty batch - can be deleted
+        expiryDate: "2024-08-15", // Expired
+        batchNumber: "AMX002",
+      },
+    ],
+    createdAt: "2024-02-20T15:30:00Z",
+    updatedAt: "2024-03-11T11:25:00Z",
   },
-
-  // Antibiotics
   {
     id: "9",
-    name: "أوجمنتين",
-    category: "مضادات حيوية",
-    dosageForm: "أقراص",
-    strength: "1جم",
+    name: "أوميبرازول",
+    code: "MED023",
+    category: "مضادات حموضة",
+    description: "علاج للحموضة والقرحة",
+    basePrice: 32.25,
+    cost: 24.8,
+    unit: "عبوة",
+    minStock: 10,
+    variants: [
+      {
+        id: "v9-1",
+        price: 32.25,
+        cost: 24.8,
+        stock: 30,
+        expiryDate: "2025-11-30",
+        batchNumber: "OMZ001",
+      },
+      {
+        id: "v9-2",
+        price: 33.5,
+        cost: 25.9,
+        stock: 20,
+        expiryDate: "2026-05-20",
+        batchNumber: "OMZ002",
+      },
+    ],
+    createdAt: "2024-01-30T12:00:00Z",
+    updatedAt: "2024-03-13T16:15:00Z",
   },
   {
     id: "10",
-    name: "زيثروماكس",
-    category: "مضادات حيوية",
-    dosageForm: "أقراص",
-    strength: "500مجم",
-  },
-  {
-    id: "11",
-    name: "أموكسيسيلين",
-    category: "مضادات حيوية",
-    dosageForm: "كبسولات",
-    strength: "500مجم",
-  },
-  {
-    id: "12",
-    name: "سيبروفلوكساسين",
-    category: "مضادات حيوية",
-    dosageForm: "أقراص",
-    strength: "500مجم",
-  },
-  {
-    id: "13",
-    name: "كلاريثروميسين",
-    category: "مضادات حيوية",
-    dosageForm: "أقراص",
-    strength: "500مجم",
-  },
-  {
-    id: "14",
-    name: "دوكسيسيكلين",
-    category: "مضادات حيوية",
-    dosageForm: "كبسولات",
-    strength: "100مجم",
-  },
-  {
-    id: "15",
-    name: "أزيثروميسين",
-    category: "مضادات حيوية",
-    dosageForm: "أقراص",
-    strength: "250مجم",
-  },
-  {
-    id: "16",
-    name: "ليفوفلوكساسين",
-    category: "مضادات حيوية",
-    dosageForm: "أقراص",
-    strength: "500مجم",
-  },
-
-  // Cold & Flu
-  {
-    id: "17",
-    name: "سيتامول",
-    category: "مسكنات",
-    dosageForm: "شراب",
-    strength: "120مجم/5مل",
-  },
-  {
-    id: "18",
-    name: "كونتراك",
-    category: "مزيلات احتقان",
-    dosageForm: "أقراص",
-    strength: "400مجم",
-  },
-  {
-    id: "19",
-    name: "أكتيفيد",
-    category: "مضادات هيستامين",
-    dosageForm: "أقراص",
-    strength: "8مجم",
-  },
-  {
-    id: "20",
-    name: "كلاريتين",
-    category: "مضادات هيستامين",
-    dosageForm: "أقراص",
-    strength: "10مجم",
-  },
-  {
-    id: "21",
-    name: "زيرتيك",
-    category: "مضادات هيستامين",
-    dosageForm: "أقراص",
-    strength: "10مجم",
-  },
-  {
-    id: "22",
-    name: "أليرجيك",
-    category: "مضادات هيستامين",
-    dosageForm: "شراب",
-    strength: "2مجم/5مل",
-  },
-
-  // Gastrointestinal
-  {
-    id: "23",
-    name: "أوميبرازول",
-    category: "مضادات حموضة",
-    dosageForm: "كبسولات",
-    strength: "20مجم",
-  },
-  {
-    id: "24",
-    name: "بانتوبرازول",
-    category: "مضادات حموضة",
-    dosageForm: "أقراص",
-    strength: "40مجم",
-  },
-  {
-    id: "25",
-    name: "رانيتيدين",
-    category: "مضادات حموضة",
-    dosageForm: "أقراص",
-    strength: "150مجم",
-  },
-  {
-    id: "26",
-    name: "فاموتيدين",
-    category: "مضادات حموضة",
-    dosageForm: "أقراص",
-    strength: "20مجم",
-  },
-  {
-    id: "27",
-    name: "موتيليوم",
-    category: "منشطات حركة",
-    dosageForm: "أقراص",
-    strength: "10مجم",
-  },
-
-  // Cardiovascular
-  {
-    id: "28",
-    name: "لوزارتان",
-    category: "ضغط دم",
-    dosageForm: "أقراص",
-    strength: "50مجم",
-  },
-  {
-    id: "29",
-    name: "أموديبيين",
-    category: "ضغط دم",
-    dosageForm: "أقراص",
-    strength: "5مجم",
-  },
-  {
-    id: "30",
-    name: "إنالابريل",
-    category: "ضغط دم",
-    dosageForm: "أقراص",
-    strength: "10مجم",
-  },
-  {
-    id: "31",
-    name: "أتينولول",
-    category: "ضغط دم",
-    dosageForm: "أقراص",
-    strength: "50مجم",
-  },
-  {
-    id: "32",
-    name: "بروبرانولول",
-    category: "ضغط دم",
-    dosageForm: "أقراص",
-    strength: "40مجم",
-  },
-  {
-    id: "33",
-    name: "أسبيرين قلبي",
-    category: "مضادات تخثر",
-    dosageForm: "أقراص",
-    strength: "81مجم",
-  },
-  {
-    id: "34",
-    name: "بلافيكس",
-    category: "مضادات تخثر",
-    dosageForm: "أقراص",
-    strength: "75مجم",
-  },
-
-  // Diabetes
-  {
-    id: "35",
     name: "ميتفورمين",
+    code: "MED035",
     category: "سكري",
-    dosageForm: "أقراص",
-    strength: "500مجم",
+    description: "علاج لمرض السكري من النوع 2",
+    basePrice: 28.0,
+    cost: 19.5,
+    unit: "علبة",
+    minStock: 15,
+    variants: [
+      {
+        id: "v10-1",
+        price: 28.0,
+        cost: 19.5,
+        stock: 45,
+        expiryDate: "2025-12-25",
+        batchNumber: "MET001",
+      },
+      {
+        id: "v10-2",
+        price: 28.5,
+        cost: 20.0,
+        stock: 0, // Empty batch - can be deleted
+        expiryDate: "2024-09-30", // Expired
+        batchNumber: "MET002",
+      },
+      {
+        id: "v10-3",
+        price: 29.0,
+        cost: 20.5,
+        stock: 25,
+        expiryDate: "2026-03-15",
+        batchNumber: "MET003",
+      },
+    ],
+    createdAt: "2024-02-25T09:45:00Z",
+    updatedAt: "2024-03-14T13:30:00Z",
   },
+];
+
+// Test medicines for delete dialog scenarios
+export const testMedicinesForDelete = [
+  // Medicine with mixed batches (some with stock, some empty)
   {
-    id: "36",
-    name: "جليكلازيد",
-    category: "سكري",
-    dosageForm: "أقراص",
-    strength: "80مجم",
-  },
-  {
-    id: "37",
-    name: "أنسولين لانتوس",
-    category: "سكري",
-    dosageForm: "حقن",
-    strength: "100 وحدة/مل",
-  },
-  {
-    id: "38",
-    name: "أنسولين هيومالوج",
-    category: "سكري",
-    dosageForm: "حقن",
-    strength: "100 وحدة/مل",
-  },
-  {
-    id: "39",
-    name: "جليمبيريد",
-    category: "سكري",
-    dosageForm: "أقراص",
-    strength: "4مجم",
-  },
-  {
-    id: "40",
-    name: "بيوجليتازون",
-    category: "سكري",
-    dosageForm: "أقراص",
-    strength: "30مجم",
+    id: "test-1",
+    name: "بانادول اختبار مختلط",
+    code: "TEST001",
+    category: "مسكنات",
+    description: "دواء اختبار به batches مختلطة",
+    basePrice: 25.5,
+    cost: 18.75,
+    unit: "علبة",
+    minStock: 10,
+    variants: [
+      {
+        id: "test-1-v1",
+        price: 25.5,
+        cost: 18.75,
+        stock: 50, // Has stock - cannot delete
+        expiryDate: "2025-12-31",
+        batchNumber: "MIX001",
+      },
+      {
+        id: "test-1-v2",
+        price: 26.0,
+        cost: 19.2,
+        stock: 0, // Empty - can delete
+        expiryDate: "2024-03-15", // Expired
+        batchNumber: "MIX002",
+      },
+      {
+        id: "test-1-v3",
+        price: 27.0,
+        cost: 20.5,
+        stock: 25, // Has stock - cannot delete
+        expiryDate: "2026-06-30",
+        batchNumber: "MIX003",
+      },
+      {
+        id: "test-1-v4",
+        price: 24.5,
+        cost: 18.0,
+        stock: 0, // Empty - can delete
+        expiryDate: "2026-01-15",
+        batchNumber: "MIX004",
+      },
+    ],
+    createdAt: "2024-01-15T10:00:00Z",
+    updatedAt: "2024-03-10T15:30:00Z",
   },
 
-  // Vitamins & Supplements
+  // Medicine with only empty batches (all can be deleted)
   {
-    id: "41",
-    name: "فيتامين د",
-    category: "فيتامينات",
-    dosageForm: "كبسولات",
-    strength: "1000 وحدة",
-  },
-  {
-    id: "42",
-    name: "فيتامين سي",
-    category: "فيتامينات",
-    dosageForm: "أقراص",
-    strength: "500مجم",
-  },
-  {
-    id: "43",
-    name: "كالسيوم",
-    category: "مكملات",
-    dosageForm: "أقراص",
-    strength: "600مجم",
-  },
-  {
-    id: "44",
-    name: "حديد",
-    category: "مكملات",
-    dosageForm: "أقراص",
-    strength: "65مجم",
-  },
-  {
-    id: "45",
-    name: "زنك",
-    category: "مكملات",
-    dosageForm: "أقراص",
-    strength: "50مجم",
-  },
-  {
-    id: "46",
-    name: "فيتامين ب المركب",
-    category: "فيتامينات",
-    dosageForm: "أقراص",
-    strength: "مركب",
-  },
-  {
-    id: "47",
-    name: "أوميغا 3",
-    category: "مكملات",
-    dosageForm: "كبسولات",
-    strength: "1000مجم",
-  },
-  {
-    id: "48",
-    name: "حمض الفوليك",
-    category: "فيتامينات",
-    dosageForm: "أقراص",
-    strength: "400مكجم",
+    id: "test-2",
+    name: "أدفيل اختبار فارغ",
+    code: "TEST002",
+    category: "مسكنات",
+    description: "دواء اختبار به batches فارغة فقط",
+    basePrice: 28.75,
+    cost: 21.5,
+    unit: "عبوة",
+    minStock: 8,
+    variants: [
+      {
+        id: "test-2-v1",
+        price: 28.75,
+        cost: 21.5,
+        stock: 0, // Empty - can delete
+        expiryDate: "2024-02-28", // Expired
+        batchNumber: "EMP001",
+      },
+      {
+        id: "test-2-v2",
+        price: 29.0,
+        cost: 22.0,
+        stock: 0, // Empty - can delete
+        expiryDate: "2024-12-31", // Will expire soon
+        batchNumber: "EMP002",
+      },
+      {
+        id: "test-2-v3",
+        price: 30.0,
+        cost: 23.5,
+        stock: 0, // Empty - can delete
+        expiryDate: "2026-08-15",
+        batchNumber: "EMP003",
+      },
+    ],
+    createdAt: "2024-01-20T09:15:00Z",
+    updatedAt: "2024-03-12T11:45:00Z",
   },
 
-  // Dermatology
+  // Medicine with only batches with stock (none can be deleted)
   {
-    id: "49",
-    name: "كريم هيدروكورتيزون",
-    category: "جلدية",
-    dosageForm: "كريم",
-    strength: "1%",
-  },
-  {
-    id: "50",
-    name: "كريم كلوتريمازول",
-    category: "جلدية",
-    dosageForm: "كريم",
-    strength: "1%",
-  },
-  {
-    id: "51",
-    name: "بنزويل بيروكسايد",
-    category: "جلدية",
-    dosageForm: "جل",
-    strength: "5%",
-  },
-  {
-    id: "52",
-    name: "كريم إيوسين",
-    category: "جلدية",
-    dosageForm: "كريم",
-    strength: "2%",
-  },
-  {
-    id: "53",
-    name: "كريم نيفين",
-    category: "جلدية",
-    dosageForm: "كريم",
-    strength: "مركب",
-  },
-
-  // Eye & Ear
-  {
-    id: "54",
-    name: "قطرة توباماكس",
-    category: "عين",
-    dosageForm: "قطرة",
-    strength: "0.5%",
-  },
-  {
-    id: "55",
-    name: "قطرة زاديتين",
-    category: "عين",
-    dosageForm: "قطرة",
-    strength: "مركب",
-  },
-  {
-    id: "56",
-    name: "قطرة أوتوفين",
-    category: "أذن",
-    dosageForm: "قطرة",
-    strength: "مركب",
-  },
-  {
-    id: "57",
-    name: "مرهم تتراسيكلين",
-    category: "عين",
-    dosageForm: "مرهم",
-    strength: "1%",
+    id: "test-3",
+    name: "أسبيرين اختبار ممتلئ",
+    code: "TEST003",
+    category: "مسكنات",
+    description: "دواء اختبار به batches ممتلئة فقط",
+    basePrice: 15.25,
+    cost: 11.8,
+    unit: "علبة",
+    minStock: 15,
+    variants: [
+      {
+        id: "test-3-v1",
+        price: 15.25,
+        cost: 11.8,
+        stock: 80, // Has stock - cannot delete
+        expiryDate: "2026-01-10",
+        batchNumber: "FULL001",
+      },
+      {
+        id: "test-3-v2",
+        price: 16.0,
+        cost: 12.4,
+        stock: 45, // Has stock - cannot delete
+        expiryDate: "2026-06-30",
+        batchNumber: "FULL002",
+      },
+      {
+        id: "test-3-v3",
+        price: 15.75,
+        cost: 12.0,
+        stock: 120, // Has stock - cannot delete
+        expiryDate: "2025-11-20",
+        batchNumber: "FULL003",
+      },
+    ],
+    createdAt: "2024-02-01T14:20:00Z",
+    updatedAt: "2024-03-11T16:00:00Z",
   },
 
-  // Respiratory
+  // Medicine with single empty batch
   {
-    id: "58",
-    name: "فنتولين",
-    category: "ربو",
-    dosageForm: "بخاخ",
-    strength: "100مكجم",
-  },
-  {
-    id: "59",
-    name: "سيرفينت",
-    category: "ربو",
-    dosageForm: "بخاخ",
-    strength: "250مكجم",
-  },
-  {
-    id: "60",
-    name: "سبيريفا",
-    category: "ربو",
-    dosageForm: "بخاخ",
-    strength: "18مكجم",
-  },
-  {
-    id: "61",
-    name: "كومبيفينت",
-    category: "ربو",
-    dosageForm: "بخاخ",
-    strength: "مركب",
+    id: "test-4",
+    name: "بروفين اختبار منفرد",
+    code: "TEST004",
+    category: "مسكنات",
+    description: "دواء اختبار به batch واحدة فارغة",
+    basePrice: 22.0,
+    cost: 16.25,
+    unit: "علبة",
+    minStock: 12,
+    variants: [
+      {
+        id: "test-4-v1",
+        price: 22.0,
+        cost: 16.25,
+        stock: 0, // Empty - can delete
+        expiryDate: "2024-01-31", // Expired
+        batchNumber: "SINGLE001",
+      },
+    ],
+    createdAt: "2024-02-10T08:30:00Z",
+    updatedAt: "2024-03-09T12:15:00Z",
   },
 
-  // Neurology
+  // Medicine with no batches (edge case)
   {
-    id: "62",
-    name: "فلوكستين",
-    category: "مضادات اكتئاب",
-    dosageForm: "كبسولات",
-    strength: "20مجم",
-  },
-  {
-    id: "63",
-    name: "سيرتالين",
-    category: "مضادات اكتئاب",
-    dosageForm: "أقراص",
-    strength: "50مجم",
-  },
-  {
-    id: "64",
-    name: "باروكستين",
-    category: "مضادات اكتئاب",
-    dosageForm: "أقراص",
-    strength: "20مجم",
-  },
-  {
-    id: "65",
-    name: "ريسبيريدون",
-    category: "مضادات ذهان",
-    dosageForm: "أقراص",
-    strength: "2مجم",
-  },
-  {
-    id: "66",
-    name: "جابابنتين",
-    category: "مضادات تشنج",
-    dosageForm: "كبسولات",
-    strength: "300مجم",
+    id: "test-5",
+    name: "فولتارين اختبار فارغ",
+    code: "TEST005",
+    category: "مسكنات",
+    description: "دواء اختبار بدون أي batches",
+    basePrice: 35.5,
+    cost: 28.9,
+    unit: "شريط",
+    minStock: 6,
+    variants: [], // No variants at all
+    createdAt: "2024-02-15T11:00:00Z",
+    updatedAt: "2024-03-13T10:30:00Z",
   },
 
-  // Hormones
+  // Medicine with many mixed batches for testing scroll
   {
-    id: "67",
-    name: "ليفوثيروكسين",
-    category: "هرمونات",
-    dosageForm: "أقراص",
-    strength: "100مكجم",
-  },
-  {
-    id: "68",
-    name: "ميثيل بريدنيزولون",
-    category: "كورتيزون",
-    dosageForm: "أقراص",
-    strength: "4مجم",
-  },
-  {
-    id: "69",
-    name: "هيدروكورتيزون",
-    category: "كورتيزون",
-    dosageForm: "أقراص",
-    strength: "10مجم",
-  },
-  {
-    id: "70",
-    name: "ديكساميثازون",
-    category: "كورتيزون",
-    dosageForm: "أقراص",
-    strength: "0.5مجم",
-  },
-
-  // Additional Common Medications
-  {
-    id: "71",
-    name: "وارفارين",
-    category: "مضادات تخثر",
-    dosageForm: "أقراص",
-    strength: "5مجم",
-  },
-  {
-    id: "72",
-    name: "ديجوكسين",
-    category: "قلب",
-    dosageForm: "أقراص",
-    strength: "0.25مجم",
-  },
-  {
-    id: "73",
-    name: "فيوروسيميد",
-    category: "مدرات بول",
-    dosageForm: "أقراص",
-    strength: "40مجم",
-  },
-  {
-    id: "74",
-    name: "سبينورولاكتون",
-    category: "مدرات بول",
-    dosageForm: "أقراص",
-    strength: "25مجم",
-  },
-  {
-    id: "75",
-    name: "ألوبورينول",
-    category: "نقرس",
-    dosageForm: "أقراص",
-    strength: "300مجم",
-  },
-  {
-    id: "76",
-    name: "كولشيسين",
-    category: "نقرس",
-    dosageForm: "أقراص",
-    strength: "0.5مجم",
-  },
-  {
-    id: "77",
-    name: "كاربامازيبين",
-    category: "مضادات تشنج",
-    dosageForm: "أقراص",
-    strength: "200مجم",
-  },
-  {
-    id: "78",
-    name: "فالبرويك أسيد",
-    category: "مضادات تشنج",
-    dosageForm: "أقراص",
-    strength: "500مجم",
-  },
-  {
-    id: "79",
-    name: "ليفوثيروكسين",
-    category: "هرمونات",
-    dosageForm: "أقراص",
-    strength: "50مكجم",
-  },
-  {
-    id: "80",
-    name: "كالسيتريول",
-    category: "فيتامينات",
-    dosageForm: "كبسولات",
-    strength: "0.25مكجم",
+    id: "test-6",
+    name: "أوجمنتين اختبار طويل",
+    code: "TEST006",
+    category: "مضادات حيوية",
+    description: "دواء اختبار به الكثير من_batches",
+    basePrice: 45.0,
+    cost: 35.2,
+    unit: "علبة",
+    minStock: 8,
+    variants: [
+      // Batches with stock
+      {
+        id: "test-6-v1",
+        price: 45.0,
+        cost: 35.2,
+        stock: 30,
+        expiryDate: "2025-08-20",
+        batchNumber: "LONG001",
+      },
+      {
+        id: "test-6-v2",
+        price: 46.0,
+        cost: 36.0,
+        stock: 0, // Empty
+        expiryDate: "2024-03-31", // Expired
+        batchNumber: "LONG002",
+      },
+      {
+        id: "test-6-v3",
+        price: 44.5,
+        cost: 34.8,
+        stock: 25,
+        expiryDate: "2026-02-15",
+        batchNumber: "LONG003",
+      },
+      {
+        id: "test-6-v4",
+        price: 47.0,
+        cost: 37.2,
+        stock: 0, // Empty
+        expiryDate: "2024-12-31",
+        batchNumber: "LONG004",
+      },
+      {
+        id: "test-6-v5",
+        price: 45.5,
+        cost: 35.8,
+        stock: 40,
+        expiryDate: "2026-07-30",
+        batchNumber: "LONG005",
+      },
+      {
+        id: "test-6-v6",
+        price: 48.0,
+        cost: 38.0,
+        stock: 0, // Empty
+        expiryDate: "2025-09-15",
+        batchNumber: "LONG006",
+      },
+      {
+        id: "test-6-v7",
+        price: 46.5,
+        cost: 36.8,
+        stock: 15,
+        expiryDate: "2026-04-20",
+        batchNumber: "LONG007",
+      },
+      {
+        id: "test-6-v8",
+        price: 44.0,
+        cost: 34.5,
+        stock: 0, // Empty
+        expiryDate: "2024-06-30", // Expired
+        batchNumber: "LONG008",
+      },
+    ],
+    createdAt: "2024-01-25T13:45:00Z",
+    updatedAt: "2024-03-14T09:20:00Z",
   },
 ];
 
@@ -767,8 +722,8 @@ for (let i = 0; i < mockMedicines.length; i++) {
   }
 }
 
-// Generate 120 additional medicines (IDs 81-200)
-for (let i = 0; i < additionalMedicines.length; i++) {
+// Generate 20 additional medicines (IDs 81-100) - enough for 2 pages with 10 per page
+for (let i = 0; i < 20; i++) {
   const medicineName = additionalMedicines[i];
   const categories = [
     "مضادات حيوية",
@@ -793,27 +748,56 @@ for (let i = 0; i < additionalMedicines.length; i++) {
     "بخاخ",
     "جل",
   ];
-  const strengths = [
-    "100مجم",
-    "200مجم",
-    "500مجم",
-    "1جم",
-    "5مجم",
-    "10مجم",
-    "20مجم",
-    "50مجم",
-    "0.5%",
-    "1%",
-    "2%",
-    "5%",
-  ];
 
   mockMedicines.push({
     id: (81 + i).toString(),
     name: medicineName,
     code: generateMedicineCode(81 + i),
     category: categories[Math.floor(Math.random() * categories.length)],
-    dosageForm: dosageForms[Math.floor(Math.random() * dosageForms.length)],
-    strength: strengths[Math.floor(Math.random() * strengths.length)],
+    description: `وصف دواء ${medicineName}`,
+    basePrice: Math.round((Math.random() * 100 + 10) * 100) / 100,
+    cost: Math.round((Math.random() * 80 + 5) * 100) / 100,
+    unit: dosageForms[Math.floor(Math.random() * dosageForms.length)],
+    minStock: Math.floor(Math.random() * 20) + 5,
+    variants: [
+      {
+        id: `v${81 + i}-1`,
+        price: Math.round((Math.random() * 100 + 10) * 100) / 100,
+        cost: Math.round((Math.random() * 80 + 5) * 100) / 100,
+        stock: Math.floor(Math.random() * 100),
+        expiryDate: new Date(
+          2025 + Math.floor(Math.random() * 2),
+          Math.floor(Math.random() * 12),
+          Math.floor(Math.random() * 28) + 1,
+        )
+          .toISOString()
+          .split("T")[0],
+        batchNumber: `BATCH${String(81 + i).padStart(3, "0")}-1`,
+      },
+      {
+        id: `v${81 + i}-2`,
+        price: Math.round((Math.random() * 100 + 10) * 100) / 100,
+        cost: Math.round((Math.random() * 80 + 5) * 100) / 100,
+        stock: Math.floor(Math.random() * 100),
+        expiryDate: new Date(
+          2025 + Math.floor(Math.random() * 2),
+          Math.floor(Math.random() * 12),
+          Math.floor(Math.random() * 28) + 1,
+        )
+          .toISOString()
+          .split("T")[0],
+        batchNumber: `BATCH${String(81 + i).padStart(3, "0")}-2`,
+      },
+    ],
+    createdAt: new Date(
+      2024,
+      Math.floor(Math.random() * 12),
+      Math.floor(Math.random() * 28) + 1,
+    ).toISOString(),
+    updatedAt: new Date(
+      2024,
+      Math.floor(Math.random() * 12),
+      Math.floor(Math.random() * 28) + 1,
+    ).toISOString(),
   });
 }

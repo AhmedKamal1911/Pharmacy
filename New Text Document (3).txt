@@ -1,0 +1,414 @@
+Global Business Rules:
+لا تحذف اي فاتورة اجعلها لاغي او مرتجع
+
+
+Customer Business Rules: 
+اذا تم مسح العميل لا نقوم بمسح اي علاقة خاصه به
+
+
+
+Customer Module Features : 
+التصدير للبيانات في العملاء  يكون excel or pdf
+بحث للعميل بالهاتف
+
+
+Vendors Business Rules: 
+الموردون يمكن للاختصار التكرر مرتين
+
+
+Vendors Module Features : 
+
+ترتيب الموردون بتاريخ التقفيل واخر بالمديونية
+
+-------------------------------------------------------------------------
+
+model Medicine {
+  id          String   @id @default(uuid())
+  name        String
+  code        String?  @unique
+
+// --- إضافات المخزون ---
+  location        String?  // مكان الرف (مثال: A1-Shelf-3)
+  minStock        Int      @default(0) // الحد الأدنى
+  maxStockLevel   Int?     // الحد الأقصى (اختياري)
+  reorderPoint    Int?     // نقطة إعادة الطلب (غالباً بتكون أعلى من الحد الأدنى بشوية)
+  
+  // ربط الدواء بالقسم
+  categoryId  String
+  // استخدام Restrict يمنع الحذف من قاعدة البيانات لو القسم جواه أدوية
+  category    Category @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+
+  description String?
+  unit        String?
+  minStock    Int?     @default(0)
+
+  variants    MedicineVariant[] @relation("MedicineVariants")
+  defaultVariantId String?          @unique
+  defaultVariant   MedicineVariant? @relation("DefaultMedicineVariant", fields: [defaultVariantId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model MedicineVariant {
+  id          String    @id @default(uuid())
+  
+  medicineId  String
+  medicine    Medicine  @relation("MedicineVariants", fields: [medicineId], references: [id], onDelete: Cascade)
+  
+  price       Decimal   @db.Decimal(10, 2) // السعر
+  cost        Decimal   @db.Decimal(10, 2) // التكلفة
+  stock       Int       @default(0)
+  expiryDate  DateTime?
+  batchNumber String?
+
+  // العلاقة العكسية لمعرفة إذا كان هذا الـ Variant هو الافتراضي لدواء معين
+  defaultForMedicine Medicine? @relation("DefaultMedicineVariant")
+
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@unique([medicineId, batchNumber])
+}
+
+
+---------------------------------------------------------------------
+model Category {
+  id          String     @id @default(uuid())
+  name        String     @unique
+  description String?
+  isActive    Boolean    @default(true) // شغال افتراضياً
+
+  // العلاقة: القسم يحتوي على عدة أدوية
+  medicines   Medicine[]
+
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+---------------------------------------------
+type CustomerType = "PERSON" | "COMPANY";
+
+model Customer {
+  id                String       @id @default(uuid())
+  name              String
+  
+  // رقم التليفون غالباً بيكون Unique عشان متسجلش العميل مرتين
+  phone             String       @unique 
+  address           String?
+  
+  type              CustomerType @default(RETAIL)
+  
+  // لو true، العميل ده ملوش آجل (كاش فقط)
+  isCashOnly        Boolean      @default(false)
+  
+  // يفضل دائماً استخدام Decimal للفلوس لمنع أخطاء الكسور العشرية
+  balance           Decimal      @default(0.00) @db.Decimal(10, 2)
+  creditLimit       Decimal      @default(0.00) @db.Decimal(10, 2)
+  
+  lastTransactionAt DateTime?
+
+  // علاقة 1-to-1 مع نظام الولاء الخاص بالعميل
+  loyalty           Loyalty?
+
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+}
+------------------------------------------
+model Loyalty {
+  id                String   @id @default(uuid())
+  
+  // الربط بالعميل (كل عميل له محفظة ولاء واحدة)
+  customerId        String   @unique
+  customer          Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  
+  // معدل اكتساب النقاط (استخدمنا Decimal عشان لو المعدل فيه كسور، مثلاً 0.5 نقطة لكل جنيه)
+  pointsPerCurrency Decimal  @default(1.00) @db.Decimal(10, 2)
+  
+  // النقاط الفعلية والمعلقة (عادة بتكون أرقام صحيحة Int)
+  totalPoints       Int      @default(0)
+  pendingPoints     Int      @default(0)
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// (تذكير: تأكد إن جدول Customer يحتوي على الحقل التالي لربط العلاقة)
+// loyalty Loyalty?
+
+--------------------------------------------------------------------------------
+
+
+// --- Enums ---
+enum PurchaseStatus {
+  PAID
+  OVERDUE
+  CANCELLED
+  RETURNED
+  PARTIALLY_RETURNED
+}
+
+// --- الموردين ---
+model Supplier {
+  id        String            @id @default(uuid())
+  name      String
+  phone     String?
+  
+  // الفواتير المرتبطة بهذا المورد
+  invoices  PurchaseInvoice[] 
+  
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+}
+
+// --- فاتورة المشتريات الرئيسية ---
+model PurchaseInvoice {
+  id               String         @id @default(uuid())
+  serialNumber     Int            @default(autoincrement()) @unique
+  invoiceNumber    String         @unique 
+  invoiceDate      DateTime
+  
+  // بيانات المورد (مع Snapshot لاسمه)
+  supplierId       String
+  supplier         Supplier       @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+  supplierName     String         
+
+  status           PurchaseStatus @default(PAID)
+  notes            String?
+
+  // --- Invoice Totals (تم تفريغها هنا) ---
+  itemsValue       Decimal        @db.Decimal(10, 2)
+  profitPercentage Decimal        @db.Decimal(5, 2)
+  total            Decimal        @db.Decimal(10, 2)
+  baseTotal        Decimal        @db.Decimal(10, 2)
+  taxTotal         Decimal        @db.Decimal(10, 2)
+  extraCosts       Decimal        @default(0) @db.Decimal(10, 2)
+  extraDiscount    Decimal        @default(0) @db.Decimal(10, 2)
+
+  // الأصناف التابعة للفاتورة
+  items            PurchaseItem[]
+
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+}
+
+// --- أصناف الفاتورة (الـ History / Snapshot) ---
+model PurchaseItem {
+  id                 String           @id @default(uuid())
+  
+  // الفاتورة التابع لها
+  purchaseInvoiceId  String
+  purchaseInvoice    PurchaseInvoice  @relation(fields: [purchaseInvoiceId], references: [id], onDelete: Cascade)
+
+  // الدواء الأساسي (مع Snapshot)
+  medicineId         String
+  medicine           Medicine         @relation(fields: [medicineId], references: [id], onDelete: Restrict)
+  medicineName       String           
+  medicineCode       String?          
+
+  // المتغير (Variant) (مع Snapshot)
+  variantId          String?
+  variant            MedicineVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+  variantPrice       Decimal?         @db.Decimal(10, 2) 
+  variantExpiryDate  DateTime?        
+  variantBatchNumber String?          
+
+  // الكميات
+  quantity           Int
+  unitsPerPackage    Int
+  bonus              Int              @default(0)
+
+  // الحسابات الخاصة بالصنف في هذه الفاتورة تحديداً
+  salePrice          Decimal          @db.Decimal(10, 2)
+  tax                Decimal          @db.Decimal(10, 2)
+  mainDiscount       Decimal          @db.Decimal(10, 2)
+  extraDiscount      Decimal          @db.Decimal(10, 2)
+  cost               Decimal          @db.Decimal(10, 2)
+
+  expiryDate         DateTime?
+  expirable          Boolean          @default(true)
+
+  createdAt          DateTime         @default(now())
+  updatedAt          DateTime         @updatedAt
+}
+
+-----------------------------------------------------------------------------------------------------------
+
+
+enum ReturnType {
+  FULL
+  PARTIAL
+}
+
+// 1. فاتورة المرتجع الرئيسية
+model PurchaseReturn {
+  id                String   @id @default(uuid())
+  returnNumber      String   @unique
+  returnDate        DateTime @default(now())
+
+  // الربط بالفاتورة الأصلية
+  originalInvoiceId String
+  originalInvoice   PurchaseInvoice @relation(fields: [originalInvoiceId], references: [id], onDelete: Restrict)
+
+  returnType        ReturnType
+  totalRefund       Decimal  @db.Decimal(10, 2)
+  notes             String?
+
+  // الأصناف المرتجعة
+  items             PurchaseReturnItem[]
+
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+}
+
+// 2. تفاصيل الأصناف المرتجعة
+model PurchaseReturnItem {
+  id                 String   @id @default(uuid())
+  
+  // الربط بفاتورة المرتجع
+  purchaseReturnId   String
+  purchaseReturn     PurchaseReturn @relation(fields: [purchaseReturnId], references: [id], onDelete: Cascade)
+
+  // ✅ الربط الحرج: سطر الفاتورة الأصلية
+  originalItemId     String
+  originalItem       PurchaseItem   @relation(fields: [originalItemId], references: [id], onDelete: Restrict)
+
+  // البيانات الخاصة بالمرتجع
+  returnedQuantity   Int
+  refundAmount       Decimal  @db.Decimal(10, 2) // المبلغ المحسوب بناءً على سعر هذا السطر في الماضي
+  reason             String?
+
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+
+-----------------------------------------------------------------------------------------------------------------------------
+
+// ===================== Enums =====================
+enum SupplierType {
+  WAREHOUSE
+  COMPANY
+  PERSON
+}
+
+enum SupplierDebitStatus {
+  PAID
+  DUE
+  OVERDUE
+}
+
+enum TransactionType {
+  PURCHASE     // فاتورة مشتريات (تزيد المديونية)
+  PAYMENT      // دفعة سداد للمورد (تقلل المديونية)
+  RETURN       // مرتجع مشتريات (يقلل المديونية)
+  ADJUSTMENT   // تعديل يدوي في الرصيد
+  SETTLEMENT   // تسوية
+  WITHDRAWAL
+  DISCOUNT
+  PENALTY
+  CREDIT_NOTE
+  DEBIT_NOTE
+}
+
+enum TransactionStatus {
+  COMPLETED
+  PENDING
+  CANCELLED
+}
+
+enum PaymentMethod {
+  CASH
+  CHECK
+  BANK_TRANSFER
+  CREDIT
+}
+
+enum PaymentStatus {
+  PAID
+  PENDING
+  BOUNCED      // شيك مرتجع مثلاً
+}
+
+// ===================== Models =====================
+
+// 1. المورد (الكيان الأساسي)
+model Supplier {
+  id                  String              @id @default(uuid())
+  short               String
+  name                String
+  supplierType        SupplierType
+  
+  // المديونية الحالية (تُحدث تلقائياً مع كل عملية)
+  debit               Decimal             @default(0.00) @db.Decimal(10, 2)
+  debitStatus         SupplierDebitStatus @default(PAID)
+  paymentPeriodMonths Int                 @default(0)
+  
+  landlinePhone       String?
+  mobilePhone         String
+  
+  settlementDate      DateTime?
+  checksDueDate       DateTime?
+
+  // العلاقات (Relations)
+  transactions        SupplierTransaction[]
+  payments            PaymentRecord[]
+  // invoices         PurchaseInvoice[] // من الخطوات السابقة
+  // returns          PurchaseReturn[]  // من الخطوات السابقة
+
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+}
+
+// 2. سجل المعاملات "كشف الحساب" (يغني عن DebitLog)
+model SupplierTransaction {
+  id              String            @id @default(uuid())
+  
+  supplierId      String
+  supplier        Supplier          @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+  supplierName    String            // Snapshot
+  
+  type            TransactionType
+  status          TransactionStatus @default(COMPLETED)
+  description     String
+  
+  amount          Decimal           @db.Decimal(10, 2)
+  balanceBefore   Decimal           @db.Decimal(10, 2)
+  balanceAfter    Decimal           @db.Decimal(10, 2)
+  
+  // الربط بالمستند الأصلي (فاتورة، إيصال دفع، أو مرتجع)
+  // نستخدم String لأنه قد يشير إلى جداول مختلفة حسب نوع المعاملة
+  referenceId     String?           
+  referenceType   String?           // مثال: "PURCHASE", "PAYMENT"
+  
+  transactionDate DateTime          @default(now())
+  notes           String?
+  createdBy       String?           // معرف المستخدم الذي قام بالعملية
+
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+}
+
+// 3. سجل المدفوعات (إيصالات الصرف للمورد)
+model PaymentRecord {
+  id              String        @id @default(uuid())
+  
+  supplierId      String
+  supplier        Supplier      @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+  
+  amount          Decimal       @db.Decimal(10, 2)
+  paymentMethod   PaymentMethod
+  paymentDate     DateTime
+  dueDate         DateTime?     // تاريخ استحقاق الشيك
+  
+  checkNumber     String?
+  bankName        String?
+  notes           String?
+  
+  status          PaymentStatus @default(PAID)
+
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+}
+
+------------------------------------------------------------------------------------------------------------------------------------------------------

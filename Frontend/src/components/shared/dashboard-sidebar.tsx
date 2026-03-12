@@ -34,6 +34,7 @@ const NAV_ITEMS = [
     items: [
       { title: "الرئيسية", url: "/", icon: LayoutDashboard },
       { title: "الفئات", url: "/categories", icon: Grid3x3 },
+      { title: "الأصناف", url: "/medicines", icon: Pill },
       { title: "المخزون", url: "/stock", icon: PackageSearch },
     ],
   },

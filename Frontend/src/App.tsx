@@ -16,6 +16,7 @@ import StockPage from "@/pages/stock-page";
 import InvoicesPage from "@/features/sales/pages/invoices-page";
 import { ReturnsPage } from "@/pages/returns-page";
 import CategoriesPage from "@/pages/categories-page";
+import { MedicinesPage } from "@/pages/medicines-page";
 
 // Placeholder components
 const About = () => <div className=" text-lg">عن نظام إدارة الصيدلية v1.0</div>;
@@ -31,6 +32,8 @@ function App() {
         {/* Changed to SalesPage as home */}
         <Route path="/categories" element={<CategoriesPage />} />{" "}
         {/* Added categories route */}
+        <Route path="/medicines" element={<MedicinesPage />} />{" "}
+        {/* Added medicines route */}
         <Route path="/inventory" element={<Inventory />} />{" "}
         {/* Matches Sidebar */}
         <Route path="/sales" element={<InvoicesPage />} />{" "}
