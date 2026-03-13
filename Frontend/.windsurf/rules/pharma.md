@@ -3,7 +3,7 @@
 Language: Arabic Only. All UI strings, toasts, and labels must be in Arabic.
 
 Direction: RTL (Right-to-Left).
-
+don't use mr-_ or ml-_ use me-_ or ms-_ instead also with padding
 Tailwind Logical Properties: Do NOT use physical directions (left/right). Use logical properties:
 
 ps-_ / pe-_ (Padding Start/End)

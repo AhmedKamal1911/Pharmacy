@@ -1,6 +1,5 @@
 import {
   Pill,
-  TrendingUp,
   PackageSearch,
   Users,
   Settings,
@@ -11,6 +10,8 @@ import {
   FileText,
   Receipt,
   Grid3x3,
+  UserCheck,
+  Shield,
 } from "lucide-react";
 
 import {
@@ -38,15 +39,22 @@ const NAV_ITEMS = [
       { title: "المخزون", url: "/stock", icon: PackageSearch },
     ],
   },
+
   {
-    group: "الإدارة والنظام",
+    group: "الفواتير",
+    items: [
+      { title: "فواتير المبيعات", url: "/sales", icon: FileText },
+      { title: "فواتير المشتريات", url: "/purchases", icon: Receipt },
+      { title: "فواتير المرتجعات", url: "/returns", icon: ArrowLeftRight },
+    ],
+  },
+  {
+    group: "الإدارة والتقارير",
     items: [
       { title: "العملاء", url: "/customers", icon: Users },
       { title: "الموردين", url: "/suppliers", icon: Truck },
-      { title: "فواتير المبيعات", url: "/sales", icon: FileText },
-      { title: "فواتير المشتريات", url: "/purchases", icon: Receipt },
-      { title: "المرتجعات", url: "/returns", icon: ArrowLeftRight },
-      { title: "التقارير", url: "/reports", icon: TrendingUp },
+      { title: "إدارة الفريق", url: "/teams", icon: UserCheck },
+      { title: "الأدوار والصلاحيات", url: "/roles-permissions", icon: Shield },
       { title: "الإعدادات", url: "/settings", icon: Settings },
     ],
   },
@@ -97,7 +105,7 @@ export default function DashboardSidebar() {
       <SidebarContent>
         <ScrollArea className="h-full px-2 group-data-[collapsible=icon]:px-0">
           {NAV_ITEMS.map((group) => (
-            <SidebarGroup key={group.group} className="mb-4">
+            <SidebarGroup key={group.group}>
               <SidebarGroupLabel className="px-4 text-md font-black text-slate-400 group-data-[collapsible=icon]:hidden">
                 {group.group}
               </SidebarGroupLabel>
@@ -139,7 +147,7 @@ export default function DashboardSidebar() {
 
                           {/* مؤشر Active الجانبي - مخفي في حالة الـ Icon */}
                           {isActive && (
-                            <div className="absolute -right-0.5 w-1 h-5 bg-primary rounded-l-full group-data-[collapsible=icon]:hidden" />
+                            <div className="absolute -right-0.5 w-1.5 h-6.5 bg-primary rounded-l-full group-data-[collapsible=icon]:hidden" />
                           )}
                         </NavLink>
                       </SidebarMenuButton>

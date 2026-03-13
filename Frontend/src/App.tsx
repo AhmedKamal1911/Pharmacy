@@ -15,8 +15,11 @@ import ExpiringPage from "@/pages/expiring-page";
 import StockPage from "@/pages/stock-page";
 import InvoicesPage from "@/features/sales/pages/invoices-page";
 import { ReturnsPage } from "@/pages/returns-page";
-import CategoriesPage from "@/pages/categories-page";
+
 import { MedicinesPage } from "@/pages/medicines-page";
+import { TeamsPage } from "@/pages/teams-page";
+import { RolesPermissionsPage } from "@/pages/roles-permissions-page";
+import CategoriesPage from "./pages/categories-page";
 
 // Placeholder components
 const About = () => <div className=" text-lg">عن نظام إدارة الصيدلية v1.0</div>;
@@ -44,6 +47,8 @@ function App() {
         <Route path="/stock" element={<StockPage />} />{" "}
         <Route path="/sales/invoices" element={<InvoicesPage />} />{" "}
         <Route path="/customers" element={<CustomersPage />} />{" "}
+        <Route path="/teams" element={<TeamsPage />} />{" "}
+        <Route path="/roles-permissions" element={<RolesPermissionsPage />} />{" "}
         <Route path="/suppliers" element={<SuppliersPage />} />{" "}
         <Route
           path="/suppliers/:supplierId/purchases"
