@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Medicine {
+  id           String    @id @default(cuid())
+  name         String    @unique
+  description  String?
+  category     String
+  price        Int // Stored in smallest currency unit (cents)
+  stock        Int       @default(0)
+  minStock     Int       @default(10)
+  expiryDate   DateTime?
+  manufacturer String?
+  barcode      String?   @unique
+  isActive     Boolean   @default(true)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  deletedAt    DateTime?
+
+  // Relations
+  saleItems        SaleItem[]
+  stockAdjustments StockAdjustment[]
+
+  @@map("medicines")
+}
+
+model Patient {
+  id                String    @id @default(cuid())
+  name              String
+  email             String?   @unique
+  phone             String?
+  address           String?
+  dateOfBirth       DateTime?
+  emergencyContact  String?
+  bloodType         String?
+  allergies         String?
+  chronicConditions String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  deletedAt         DateTime?
+
+  // Relations
+  sales Sale[]
+
+  @@map("patients")
+}
+
+model Sale {
+  id            String    @id @default(cuid())
+  patientId     String?
+  totalAmount   Int // Stored in smallest currency unit (cents)
+  discount      Int       @default(0)
+  finalAmount   Int // Stored in smallest currency unit (cents)
+  paymentMethod String // CASH, CARD, INSURANCE
+  paymentStatus String // PENDING, PAID, REFUNDED
+  notes         String?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  // Relations
+  patient Patient?   @relation(fields: [patientId], references: [id])
+  items   SaleItem[]
+
+  @@map("sales")
+}
+
+model SaleItem {
+  id         String   @id @default(cuid())
+  saleId     String
+  medicineId String
+  quantity   Int
+  unitPrice  Int // Stored in smallest currency unit (cents)
+  totalPrice Int // Stored in smallest currency unit (cents)
+  createdAt  DateTime @default(now())
+
+  // Relations
+  sale     Sale     @relation(fields: [saleId], references: [id], onDelete: Cascade)
+  medicine Medicine @relation(fields: [medicineId], references: [id])
+
+  @@map("sale_items")
+}
+
+model StockAdjustment {
+  id          String   @id @default(cuid())
+  medicineId  String
+  type        String // IN, OUT, ADJUSTMENT
+  quantity    Int
+  reason      String?
+  referenceId String? // Could reference sale ID, purchase ID, etc.
+  createdAt   DateTime @default(now())
+
+  // Relations
+  medicine Medicine @relation(fields: [medicineId], references: [id])
+
+  @@map("stock_adjustments")
+}
+
+model User {
+  id          String    @id @default(cuid())
+  email       String    @unique
+  username    String    @unique
+  password    String // Hashed password
+  role        String // ADMIN, PHARMACIST, CASHIER
+  firstName   String
+  lastName    String
+  isActive    Boolean   @default(true)
+  lastLoginAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  deletedAt   DateTime?
+
+  @@map("users")
+}
